@@ -2,11 +2,12 @@ import React from 'react'
 
 import {TouchableOpacity, View, StyleSheet} from "react-native";
 
-import {Entypo, Feather, SimpleLineIcons } from "@expo/vector-icons";
+import {Feather, SimpleLineIcons } from "@expo/vector-icons";
+import HamburgerSvg from "./HamburgerSvg";
 
 export const HamburgerButton = ({navigation}) => (
-    <TouchableOpacity style={[styles.btnWrapper, {marginLeft: 20}]}>
-        <Entypo name="menu" size={30} color="black" onPress={() => navigation.openDrawer()}/>
+    <TouchableOpacity style={[styles.btnWrapper, {marginLeft: 20}]} onPress={() => navigation.openDrawer()}>
+        <HamburgerSvg />
     </TouchableOpacity>
 )
 
