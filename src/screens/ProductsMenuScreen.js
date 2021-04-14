@@ -1,21 +1,55 @@
-import React from 'react'
-import {View, Text, Image, StyleSheet} from "react-native";
+import React, {useEffect, useState} from 'react'
+import {View, Text, TouchableOpacity, FlatList, ActivityIndicator, StyleSheet} from "react-native";
 
-//const menuItemImg = require('../../assets/menu-item1.png')
-
-const MenuListItem = () => {
+const MenuListItem = ({navigation}) => {
     return (
         <View>
-            <Text style={styles.label}>Роллы</Text>
+            <TouchableOpacity style={styles.label}
+                              onPress={() => navigation.push('MenuItem')}><Text>Роллы</Text></TouchableOpacity>
+            <TouchableOpacity style={styles.label}><Text>Суши и гунканы</Text></TouchableOpacity>
+            <TouchableOpacity style={styles.label}><Text>Сеты</Text></TouchableOpacity>
+            <TouchableOpacity style={styles.label}><Text>Лапша и рис</Text></TouchableOpacity>
         </View>
     )
 }
 
-export const ProductsMenuScreen = () => {
+export const ProductsMenuScreen = ({navigation}) => {
+    const [categories, setCategories] = useState({loading: true})
+
+    useEffect(() => {
+        fetch('https://namisushi.ru/api/categories')
+            .then(response => response.json())
+            .then(responseJson => {
+                setCategories({
+                    loading: false,
+                    categoryList: responseJson
+                })
+            })
+    }, [])
+
+    if (categories.loading) {
+        return (
+            <View style={{flex: 1, justifyContent: 'center'}}>
+                <ActivityIndicator size="large" color="#0000ff"/>
+            </View>
+        )
+    }
+
+
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Menu</Text>
-            <MenuListItem />
+            <Text style={styles.title}>Меню</Text>
+            <FlatList
+                data={categories.categoryList}
+                renderItem={({item}) => (
+                    <TouchableOpacity onPress={() => navigation.push('MenuItem', {_id: item._id})}>
+                        <Text style={styles.label}>
+                            {item.title}
+                        </Text>
+                    </TouchableOpacity>
+                )}
+                keyExtractor={({_id}) => _id}
+            />
         </View>
     )
 }
@@ -27,8 +61,9 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start'
     },
     title: {
+        fontFamily: 'Raleway-bold',
         marginTop: 20,
-        fontSize: 14,
+        fontSize: 20,
         color: '#1B4965'
     },
     img: {
@@ -37,8 +72,9 @@ const styles = StyleSheet.create({
         resizeMode: 'cover'
     },
     label: {
-        textAlign: 'center',
-        fontSize: 12,
+        marginTop: 10,
+        marginBottom: 10,
+        fontSize: 15,
         color: '#1B4965'
     }
 })

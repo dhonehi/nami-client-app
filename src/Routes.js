@@ -8,6 +8,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Login from './screens/Login'
 import {Register} from "./screens/Register";
 import {ProductsMenuScreen} from "./screens/ProductsMenuScreen";
+import {MenuItemsScreen} from "./screens/MenuItemsScreen";
 import {HamburgerButton, HeaderBtnGroup} from "./components/Header";
 
 const MenuStack = createStackNavigator()
@@ -25,6 +26,13 @@ const MenuStackNavigator = ({navigation}) => (
     <MenuStack.Navigator>
         <MenuStack.Screen name="Menu" component={ProductsMenuScreen} options={{
             headerLeft: () => (<HamburgerButton navigation={navigation}/>),
+            headerRight: () => (<HeaderBtnGroup/>),
+            headerTitle: '',
+            headerStatusBarHeight: 30,
+            //headerTransparent: true
+        }}
+        />
+        <MenuStack.Screen name="MenuItem" component={MenuItemsScreen} options={{
             headerRight: () => (<HeaderBtnGroup/>),
             headerTitle: '',
             headerStatusBarHeight: 30,
