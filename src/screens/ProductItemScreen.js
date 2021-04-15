@@ -1,8 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {View, Text, Image, TouchableWithoutFeedback, StyleSheet, Button} from "react-native";
 
-import { useNavigationState } from '@react-navigation/native';
-
 import {AntDesign} from '@expo/vector-icons';
 
 import {RALEWAY_BOLD, RALEWAY_REGULAR} from "../fonts/fontsTypes";
@@ -34,8 +32,6 @@ const AddToCardBth = () => {
 }
 
 export const ProductItemScreen = ({route: {params: {product}}}) => {
-
-
     return (
         <View style={styles.productContainer}>
             <View style={{alignItems: 'center', width: '100%'}}>

@@ -48,13 +48,13 @@ const MenuStackNavigator = ({navigation}) => (
             headerRight: () => (<HeaderBtnGroup/>),
             headerTitle: '',
             headerStatusBarHeight: 30,
-            //headerTransparent: true
         }}
         />
         <MenuStack.Screen name="ProductItem" component={ProductItemScreen} options={{
             headerTitle: '',
             headerStatusBarHeight: 30,
-            //headerTransparent: true
+            gestureDirection: 'horizontal-inverted',
+            gestureEnabled: false,
         }}
         />
     </MenuStack.Navigator>
