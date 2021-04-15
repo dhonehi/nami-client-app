@@ -3,12 +3,14 @@ import React from 'react'
 import {createStackNavigator} from "@react-navigation/stack"
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import {NavigationContainer} from "@react-navigation/native";
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import {getFocusedRouteNameFromRoute} from '@react-navigation/native';
 
 import Login from './screens/Login'
 import {Register} from "./screens/Register";
 import {ProductsMenuScreen} from "./screens/ProductsMenuScreen";
 import {MenuItemsScreen} from "./screens/MenuItemsScreen";
+import {ProductItemScreen} from "./screens/ProductItemScreen";
 import {HamburgerButton, HeaderBtnGroup} from "./components/Header";
 
 const MenuStack = createStackNavigator()
@@ -16,11 +18,21 @@ const AuthStack = createStackNavigator()
 const Drawer = createDrawerNavigator()
 const Tab = createBottomTabNavigator();
 
-const Tabs = () => (
-    <Tab.Navigator>
-        <Tab.Screen name="Menu" component={MenuStackNavigator} />
-    </Tab.Navigator>
-)
+const Tabs = () => {
+    return (
+        <Tab.Navigator options={{lazy: true}}>
+            <Tab.Screen name="Menu" component={MenuStackNavigator}
+                        options={({route}) => ({
+                            tabBarVisible: ((route) => {
+                                const routeName = getFocusedRouteNameFromRoute(route) ?? ""
+
+                                return routeName !== "ProductItem";
+                            })(route),
+                        })}/>
+        </Tab.Navigator>
+    )
+}
+
 
 const MenuStackNavigator = ({navigation}) => (
     <MenuStack.Navigator>
@@ -34,6 +46,12 @@ const MenuStackNavigator = ({navigation}) => (
         />
         <MenuStack.Screen name="MenuItem" component={MenuItemsScreen} options={{
             headerRight: () => (<HeaderBtnGroup/>),
+            headerTitle: '',
+            headerStatusBarHeight: 30,
+            //headerTransparent: true
+        }}
+        />
+        <MenuStack.Screen name="ProductItem" component={ProductItemScreen} options={{
             headerTitle: '',
             headerStatusBarHeight: 30,
             //headerTransparent: true

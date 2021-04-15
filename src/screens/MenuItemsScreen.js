@@ -1,14 +1,14 @@
 import React, {useEffect, useState} from 'react'
-import {View, Text, Image, StyleSheet, ActivityIndicator, FlatList, ScrollView} from "react-native";
+import {View, Text, Image, StyleSheet, ActivityIndicator, FlatList, TouchableOpacity} from "react-native";
 
 import {RALEWAY_REGULAR, RALEWAY_BOLD} from "../fonts/fontsTypes";
 
-const ProductCard = ({product, index}) => {
+const ProductCard = ({product, index, navigation}) => {
     const checkIndexIsEven = (n) => n % 2 === 0;
 
-
     return (
-        <View
+        <TouchableOpacity
+            onPress={() => navigation.navigate('ProductItem', {product: product})}
             style={[styles.productContainer, {marginTop: index === 0 ? 70 : index === 1 ? 20 : !checkIndexIsEven(index) ? -30 : 20}]}>
             <Image style={{width: 70, height: 70}} source={{
                 uri: `https://namisushi.ru${product.images[0]}`
@@ -17,12 +17,12 @@ const ProductCard = ({product, index}) => {
                 <Text style={styles.productDescription}>{product.title}</Text>
             </View>
             <Text style={styles.productPrice}>{product.cost}</Text>
-        </View>
+        </TouchableOpacity>
     )
 }
 
 
-export const MenuItemsScreen = ({route: {params: {_id}}}) => {
+export const MenuItemsScreen = ({route: {params: {_id}}, navigation}) => {
     const [products, setProducts] = useState({loading: true})
 
     useEffect(() => {
@@ -30,7 +30,6 @@ export const MenuItemsScreen = ({route: {params: {_id}}}) => {
         fetch(url)
             .then(response => response.json())
             .then(responseJson => {
-                console.log(responseJson)
                 setProducts({
                     loading: false,
                     productsList: responseJson.products,
@@ -57,7 +56,7 @@ export const MenuItemsScreen = ({route: {params: {_id}}}) => {
                 numColumns={2}
                 horizontal={false}
                 data={products.productsList}
-                renderItem={({item, index}) => <ProductCard product={item} index={index}/>}
+                renderItem={({item, index}) => <ProductCard product={item} index={index} navigation={navigation}/>}
                 keyExtractor={({_id}) => _id}
             />
         </View>
