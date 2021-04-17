@@ -9,8 +9,9 @@ import Login from '../screens/Login'
 import {Register} from "../screens/Register";
 import {ProductsMenuScreen} from "../screens/ProductsMenuScreen";
 import {MenuItemsScreen} from "../screens/MenuItemsScreen";
-import {ProductItemScreen} from "../screens/ProductItemScreen";
-import {HamburgerButton, HeaderBtnGroup} from "../components/Header";
+import ProductItemScreen from "../screens/ProductItemScreen";
+import {HamburgerButton} from "../components/Header";
+import HeaderBtnGroup from "../components/Header";
 
 import MyTabBar from "./components/MyTabBar";
 

@@ -1,10 +1,13 @@
-import React, {useEffect, useState} from "react";
-import {View, Text, Image, TouchableWithoutFeedback, StyleSheet, Button} from "react-native";
+import React, {useState} from "react";
+import {View, Text, Image, TouchableWithoutFeedback, StyleSheet} from "react-native";
+
+import {connect} from "react-redux";
+
+import CardBtnGroup from "../components/CardBtnGroup";
 
 import {AntDesign} from '@expo/vector-icons';
 
 import {RALEWAY_BOLD, RALEWAY_REGULAR} from "../fonts/fontsTypes";
-
 
 const FavouriteBtn = () => {
     const [isClickOnHeart, setIsClickOnHeart] = useState(false)
@@ -12,7 +15,7 @@ const FavouriteBtn = () => {
     return (
         <TouchableWithoutFeedback
             onPress={() => setIsClickOnHeart(!isClickOnHeart)}>
-            <View style={{backgroundColor: 'white', padding: 10, width: 45, borderRadius: 8, justifyContent: 'center'}}>
+            <View style={{backgroundColor: 'white', padding: 15, width: 55, borderRadius: 8, justifyContent: 'center'}}>
                 {isClickOnHeart ?
                     <AntDesign name="heart" size={24} color="red"/> :
                     <AntDesign name="hearto" size={24} color="black"/>}
@@ -21,17 +24,7 @@ const FavouriteBtn = () => {
     )
 }
 
-const AddToCardBth = () => {
-    return (
-        <TouchableWithoutFeedback>
-            <View style={styles.addToCardBtn}>
-                <Text style={{color: 'white'}}>Добавить в корзину</Text>
-            </View>
-        </TouchableWithoutFeedback>
-    )
-}
-
-export const ProductItemScreen = ({route: {params: {product}}}) => {
+const ProductItemScreen = ({route: {params: {product}}}) => {
     return (
         <View style={styles.productContainer}>
             <View style={{alignItems: 'center', width: '100%'}}>
@@ -47,15 +40,20 @@ export const ProductItemScreen = ({route: {params: {product}}}) => {
                 <View style={styles.productContent}>
                     <Text style={styles.productDescription}>{product.description}</Text>
                     <Text style={styles.productPrice}>{product.cost} &#8381;</Text>
-                    <View style={styles.actions}>
-                        <FavouriteBtn/>
-                        <AddToCardBth/>
-                    </View>
+                    <CardBtnGroup product={product}/>
                 </View>
             </View>
         </View>
     )
 }
+
+const mapStateToProps = state => {
+    return {
+        userCard: state.userCard.userCard
+    }
+}
+
+export default connect(mapStateToProps)(ProductItemScreen)
 
 const styles = StyleSheet.create({
     productContainer: {
@@ -91,19 +89,4 @@ const styles = StyleSheet.create({
         fontFamily: RALEWAY_BOLD,
         color: '#323232'
     },
-    actions: {
-        marginBottom: 30,
-        flexDirection: 'row'
-    },
-    addToCardBtn: {
-        flexDirection: 'row',
-        flex: 1,
-        justifyContent: 'center',
-        fontFamily: RALEWAY_REGULAR,
-        paddingVertical: 15,
-        fontSize: 15,
-        backgroundColor: '#1B4965',
-        borderRadius: 12,
-        marginLeft: 20,
-    }
 })

@@ -1,21 +1,16 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 
-import {TouchableOpacity, View, StyleSheet} from "react-native";
+import {TouchableOpacity, View, Text, StyleSheet} from "react-native";
 
-import {Feather, SimpleLineIcons } from "@expo/vector-icons";
+import {Feather, SimpleLineIcons} from "@expo/vector-icons";
 import HamburgerSvg from "../icons/HamburgerSvg";
 
-export const HamburgerButton = ({navigation}) => (
-    <TouchableOpacity style={[styles.btnWrapper, {marginLeft: 20}]} onPress={() => navigation.openDrawer()}>
-        <HamburgerSvg />
-    </TouchableOpacity>
-)
+import {connect} from "react-redux";
 
-export const HeaderBtnGroup = () => (
-    <View style={styles.btnGroup}>
-        <SearchBtn />
-        <CartBtn />
-    </View>
+const HamburgerButton = ({navigation}) => (
+    <TouchableOpacity style={[styles.btnWrapper, {marginLeft: 20}]} onPress={() => navigation.openDrawer()}>
+        <HamburgerSvg/>
+    </TouchableOpacity>
 )
 
 const SearchBtn = () => (
@@ -24,12 +19,29 @@ const SearchBtn = () => (
     </TouchableOpacity>
 )
 
-const CartBtn = () => (
+const CartBtn = ({userCard}) => (
     <TouchableOpacity style={[styles.btnWrapper, styles.cartBtn]}>
-        <View style={styles.cartDot} />
-        <SimpleLineIcons name="bag" size={30} color="black" />
+        {userCard.length > 0 && <View style={styles.cartDot}/>}
+        <SimpleLineIcons name="bag" size={30} color="black"/>
     </TouchableOpacity>
 )
+
+const HeaderBtnGroup = (props) => (
+    <View style={styles.btnGroup}>
+        <SearchBtn/>
+        <CartBtn userCard={props.userCard}/>
+    </View>
+)
+
+const mapStateToProps = state => {
+    return {
+        userCard: state.userCard.userCard
+    }
+}
+
+export default connect(mapStateToProps)(HeaderBtnGroup)
+export {HamburgerButton}
+
 
 const styles = StyleSheet.create({
     btnWrapper: {

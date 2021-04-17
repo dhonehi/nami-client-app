@@ -30,7 +30,7 @@ export const ProductsMenuScreen = ({navigation}) => {
     if (categories.loading) {
         return (
             <View style={{flex: 1, justifyContent: 'center'}}>
-                <ActivityIndicator size="large" color="#0000ff"/>
+                <ActivityIndicator size="large" color="#000ff"/>
             </View>
         )
     }

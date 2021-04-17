@@ -2,7 +2,13 @@ import React from "react";
 
 import {useFonts} from 'expo-font';
 
+import {Provider} from "react-redux";
+
 import {Routes} from "./src/router/Routes"
+
+import configureStore from "./src/store/store";
+
+const store = configureStore()
 
 export default function App() {
     const [loaded] = useFonts({
@@ -17,6 +23,8 @@ export default function App() {
     }
 
     return (
-        <Routes/>
+        <Provider store={store}>
+            <Routes/>
+        </Provider>
     )
 }
