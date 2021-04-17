@@ -35,7 +35,6 @@ export const ProductsMenuScreen = ({navigation}) => {
         )
     }
 
-
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Меню</Text>

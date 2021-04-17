@@ -3,7 +3,7 @@ import React from 'react'
 import {TouchableOpacity, View, StyleSheet} from "react-native";
 
 import {Feather, SimpleLineIcons } from "@expo/vector-icons";
-import HamburgerSvg from "./HamburgerSvg";
+import HamburgerSvg from "../icons/HamburgerSvg";
 
 export const HamburgerButton = ({navigation}) => (
     <TouchableOpacity style={[styles.btnWrapper, {marginLeft: 20}]} onPress={() => navigation.openDrawer()}>
