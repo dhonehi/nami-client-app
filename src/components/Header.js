@@ -2,7 +2,7 @@ import React, {useEffect} from 'react'
 
 import {TouchableOpacity, View, Text, StyleSheet} from "react-native";
 
-import {Feather, SimpleLineIcons} from "@expo/vector-icons";
+import {Feather, SimpleLineIcons, FontAwesome} from "@expo/vector-icons";
 import HamburgerSvg from "../icons/HamburgerSvg";
 
 import {connect} from "react-redux";
@@ -19,8 +19,10 @@ const SearchBtn = () => (
     </TouchableOpacity>
 )
 
-const CartBtn = ({userCard}) => (
-    <TouchableOpacity style={[styles.btnWrapper, styles.cartBtn]}>
+const CartBtn = ({userCard, navigation}) => (
+    <TouchableOpacity
+        onPress={() => navigation.navigate('ProductCard')}
+        style={[styles.btnWrapper, styles.cartBtn]}>
         {userCard.length > 0 && <View style={styles.cartDot}/>}
         <SimpleLineIcons name="bag" size={30} color="black"/>
     </TouchableOpacity>
@@ -29,8 +31,16 @@ const CartBtn = ({userCard}) => (
 const HeaderBtnGroup = (props) => (
     <View style={styles.btnGroup}>
         <SearchBtn/>
-        <CartBtn userCard={props.userCard}/>
+        <CartBtn userCard={props.userCard} navigation={props.navigation}/>
     </View>
+)
+
+const BackBtn = ({navigation}) => (
+    <TouchableOpacity
+        onPress={() => navigation.goBack()}
+        style={[styles.btnWrapper, styles.backBtn]}>
+        <FontAwesome name="long-arrow-left" size={24} color="black" />
+    </TouchableOpacity>
 )
 
 const mapStateToProps = state => {
@@ -41,13 +51,15 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps)(HeaderBtnGroup)
 export {HamburgerButton}
+export {BackBtn}
+export const headerHeight = 90
 
 
 const styles = StyleSheet.create({
     btnWrapper: {
         paddingVertical: 6,
         paddingHorizontal: 8,
-        borderRadius: 4,
+        borderRadius: 8,
         backgroundColor: 'white'
     },
     btnGroup: {
@@ -63,9 +75,12 @@ const styles = StyleSheet.create({
         width: 6,
         height: 6,
         borderRadius: 10,
-        right: 3,
-        top: 3,
+        right: 4,
+        top: 4,
         backgroundColor: '#1B4965'
+    },
+    backBtn: {
+        marginLeft: 15
     }
 
 })

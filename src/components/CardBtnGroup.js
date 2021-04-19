@@ -1,9 +1,11 @@
-import React, {useEffect, useState} from "react";
-import {View, Text, TouchableWithoutFeedback, StyleSheet} from "react-native";
+import React, {useEffect, useRef, useState} from "react";
+import {View, Text, TouchableWithoutFeedback, StyleSheet, Animated, Easing} from "react-native";
 
 import {Entypo, MaterialCommunityIcons, Ionicons, AntDesign} from '@expo/vector-icons';
 
 import {connect} from "react-redux";
+
+import TranslateAnim from "../animations/TranslateAnim";
 
 import {addToUserCard, removeAllProduct, removeFromUserCard} from "../store/actions/userCard";
 import {RALEWAY_MEDIUM, RALEWAY_REGULAR} from "../fonts/fontsTypes";
@@ -31,12 +33,22 @@ const FavouriteBtn = () => {
 }
 
 const AddToCardBth = ({onClick}) => {
+    const animSettings = {
+        start: 0,
+        end: 100,
+        duration: 300,
+        translate: [100, 0],
+        opacity: [0, 1]
+    }
+
     return (
-        <TouchableWithoutFeedback onPress={onClick}>
-            <View style={styles.addToCardBtn}>
-                <Text style={styles.addBtnText}>Добавить в корзину</Text>
-            </View>
-        </TouchableWithoutFeedback>
+        <TranslateAnim settings={animSettings} styles={{flex: 1}}>
+            <TouchableWithoutFeedback onPress={onClick}>
+                <View style={styles.addToCardBtn}>
+                    <Text style={styles.addBtnText}>Добавить в корзину</Text>
+                </View>
+            </TouchableWithoutFeedback>
+        </TranslateAnim>
     )
 }
 
@@ -72,14 +84,26 @@ export const ProductCountSelect = ({userCard, product, addToCard, removeFromCard
 }
 
 const ActionsWithProduct = (props) => {
+    const animSettings = {
+        start: 0,
+        end: 100,
+        duration: 300,
+        translate: [100, 0],
+        opacity: [0, 1]
+    }
+
     return (
         <>
-            <ProductCountSelect {...props} />
-            <TouchableWithoutFeedback onPress={() => props.removeAll(props.product)}>
-                <View style={styles.removeBtn}>
-                    <Ionicons name="md-trash-outline" size={24} color="white"/>
-                </View>
-            </TouchableWithoutFeedback>
+            <TranslateAnim settings={animSettings}>
+                <ProductCountSelect {...props} />
+            </TranslateAnim>
+            <TranslateAnim settings={animSettings}>
+                <TouchableWithoutFeedback onPress={() => props.removeAll(props.product)}>
+                    <View style={styles.removeBtn}>
+                        <Ionicons name="md-trash-outline" size={24} color="white"/>
+                    </View>
+                </TouchableWithoutFeedback>
+            </TranslateAnim>
         </>
     )
 }
@@ -92,7 +116,8 @@ const CardBtnGroup = (props) => {
     return (
         <View style={styles.container}>
             <FavouriteBtn/>
-            {!isInCard() ? <AddToCardBth onClick={() => props.addToCard(props.product)}/> : <ActionsWithProduct {...props}/>}
+            {!isInCard() ? <AddToCardBth onClick={() => props.addToCard(props.product)}/> :
+                <ActionsWithProduct {...props}/>}
         </View>
     )
 }
@@ -123,6 +148,7 @@ const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+        alignItems: 'center',
         marginBottom: 20,
     },
     btnContainer: {

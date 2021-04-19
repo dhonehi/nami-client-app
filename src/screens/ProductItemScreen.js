@@ -7,7 +7,8 @@ import CardBtnGroup from "../components/CardBtnGroup";
 
 import {AntDesign} from '@expo/vector-icons';
 
-import {RALEWAY_BOLD, RALEWAY_REGULAR} from "../fonts/fontsTypes";
+import {RALEWAY_BOLD, RALEWAY_MEDIUM, RALEWAY_REGULAR} from "../fonts/fontsTypes";
+import {headerHeight} from "../components/Header";
 
 const FavouriteBtn = () => {
     const [isClickOnHeart, setIsClickOnHeart] = useState(false)
@@ -58,7 +59,7 @@ export default connect(mapStateToProps)(ProductItemScreen)
 const styles = StyleSheet.create({
     productContainer: {
         flex: 1,
-        marginTop: 10
+        marginTop: headerHeight
     },
     img: {
         width: '80%',
@@ -69,7 +70,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between'
     },
     productTitle: {
-        fontSize: 19,
+        fontSize: 25,
         fontFamily: RALEWAY_BOLD,
         color: '#323232'
     },
@@ -80,8 +81,9 @@ const styles = StyleSheet.create({
     },
     productDescription: {
         marginTop: 20,
-        fontSize: 15,
-        fontFamily: RALEWAY_REGULAR,
+        fontSize: 19,
+        fontFamily: RALEWAY_MEDIUM,
+        lineHeight: 30,
         color: '#505050'
     },
     productPrice: {
