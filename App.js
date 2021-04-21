@@ -15,7 +15,8 @@ export default function App() {
         'Raleway-bold': require('./assets/fonts/Raleway/Raleway-Bold.ttf'),
         'Raleway-light': require('./assets/fonts/Raleway/Raleway-Light.ttf'),
         'Raleway-regular': require('./assets/fonts/Raleway/Raleway-Regular.ttf'),
-        'Raleway-medium': require('./assets/fonts/Raleway/Raleway-Medium.ttf')
+        'Raleway-medium': require('./assets/fonts/Raleway/Raleway-Medium.ttf'),
+        'Raleway-extra-bold': require('./assets/fonts/Raleway/Raleway-ExtraBold.ttf')
     });
 
     if (!loaded) {

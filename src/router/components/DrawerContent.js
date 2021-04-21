@@ -1,6 +1,6 @@
-import {View, Text, StyleSheet} from "react-native";
+import {View, Text, Image, StyleSheet} from "react-native";
 
-import { AntDesign, Entypo } from '@expo/vector-icons';
+import {AntDesign, Entypo} from '@expo/vector-icons';
 
 import React from "react";
 import {
@@ -14,23 +14,28 @@ function CustomDrawerContent(props) {
     return (
         <View style={styles.drawerContent}>
             <DrawerContentScrollView {...props}>
+                <View style={styles.drawerHeader}>
+                    <Image source={require('../../../assets/user-avatar.png')}/>
+                    <Text style={styles.drawerHeaderText}>Клиент</Text>
+                </View>
+
                 <View style={styles.drawerSection}>
                     <View style={styles.drawerItem}>
-                        <AntDesign style={styles.icon} name="earth" size={20} color="rgba(255, 255, 255, 0.6)" />
+                        <AntDesign style={styles.icon} name="earth" size={20} color="rgba(255, 255, 255, 0.6)"/>
                         <Text style={styles.drawerText}>Сайт</Text>
                     </View>
                     <View style={styles.drawerItem}>
-                        <Entypo style={styles.icon} name="vk" size={20} color="rgba(255, 255, 255, 0.6)" />
+                        <Entypo style={styles.icon} name="vk" size={20} color="rgba(255, 255, 255, 0.6)"/>
                         <Text style={styles.drawerText}>vk.com</Text>
                     </View>
                     <View style={styles.drawerItem}>
-                        <AntDesign style={styles.icon} name="instagram" size={20} color="rgba(255, 255, 255, 0.6)" />
+                        <AntDesign style={styles.icon} name="instagram" size={20} color="rgba(255, 255, 255, 0.6)"/>
                         <Text style={styles.drawerText}>Instagram</Text>
                     </View>
                 </View>
                 <View style={styles.drawerSection}>
                     <View style={styles.drawerItem}>
-                        <AntDesign style={styles.icon}   name="heart" size={20} color="rgba(255, 255, 255, 0.6)" />
+                        <AntDesign style={styles.icon} name="heart" size={20} color="rgba(255, 255, 255, 0.6)"/>
                         <Text style={styles.drawerText}>Избранное</Text>
                     </View>
                 </View>
@@ -55,9 +60,21 @@ const styles = StyleSheet.create({
     drawerSection: {
         marginBottom: 40
     },
+    drawerHeader: {
+        marginTop: 30,
+        marginBottom: 60,
+        flexDirection: 'row',
+        alignItems: 'center'
+    },
+    drawerHeaderText: {
+        marginLeft: 14,
+        color: 'white',
+        fontSize: 14,
+        fontFamily: RALEWAY_MEDIUM
+    },
     drawerItem: {
         flexDirection: 'row',
-        marginBottom: 15
+        marginBottom: 20
     },
     drawerText: {
         fontSize: 16,

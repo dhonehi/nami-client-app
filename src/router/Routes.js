@@ -14,12 +14,13 @@ import ProductCardScreen from "../screens/ProductCardScreen";
 import {BackBtn, HamburgerButton} from "../components/Header";
 import HeaderBtnGroup from "../components/Header";
 import OrderScreen from "../screens/OrderScreen";
+import ProfileScreen from "../screens/ProfileScreen";
 
 import MyTabBar from "./components/MyTabBar";
 import DrawerContent from "./components/DrawerContent";
 
 const MenuStack = createStackNavigator()
-const AuthStack = createStackNavigator()
+//const ProfileScreen = createStackNavigator()
 const Drawer = createDrawerNavigator()
 const Tab = createBottomTabNavigator();
 
@@ -27,7 +28,7 @@ const Tabs = () => {
     return (
         <Tab.Navigator tabBar={props => <MyTabBar {...props} />}>
             <Tab.Screen name="Menu" options={{title: 'Меню'}} component={MenuStackNavigator}/>
-            <Tab.Screen name="Login" component={AuthStackNavigator}/>
+            <Tab.Screen name="Profile" options={{title: 'Профиль'}} component={ProfileScreen}/>
         </Tab.Navigator>
     )
 }
@@ -95,8 +96,7 @@ export const Routes = () => {
     return (
         <NavigationContainer>
             <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />}>
-                <Drawer.Screen name="Menu" component={Tabs}/>
-                <Drawer.Screen name="Login" component={AuthStackNavigator}/>
+                <Drawer.Screen name="Main" component={Tabs}/>
             </Drawer.Navigator>
         </NavigationContainer>
     )

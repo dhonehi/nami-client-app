@@ -3,7 +3,7 @@ import {Text, TouchableOpacity, View, StyleSheet} from "react-native";
 
 import {RALEWAY_BOLD} from "../../fonts/fontsTypes";
 
-import {MenuIcon, OrdersIcon} from "../../icons/tabIcons";
+import {MenuIcon, OrdersIcon, ProfileIcon} from "../../icons/tabIcons";
 
 export default function MyTabBar({state, descriptors, navigation}) {
     const index = state?.routes[0]?.state?.index
@@ -53,7 +53,7 @@ export default function MyTabBar({state, descriptors, navigation}) {
                             onPress={onPress}
                         >
                             {label === 'Меню' && <MenuIcon/>}
-                            {label === 'Login' && <OrdersIcon/>}
+                            {label === 'Профиль' && <ProfileIcon/>}
                         </TouchableOpacity>
                     );
                 }
