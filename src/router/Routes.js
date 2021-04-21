@@ -13,8 +13,10 @@ import ProductItemScreen from "../screens/ProductItemScreen";
 import ProductCardScreen from "../screens/ProductCardScreen";
 import {BackBtn, HamburgerButton} from "../components/Header";
 import HeaderBtnGroup from "../components/Header";
+import OrderScreen from "../screens/OrderScreen";
 
 import MyTabBar from "./components/MyTabBar";
+import DrawerContent from "./components/DrawerContent";
 
 const MenuStack = createStackNavigator()
 const AuthStack = createStackNavigator()
@@ -42,7 +44,7 @@ const MenuStackNavigator = ({navigation}) => (
         }}
         />
         <MenuStack.Screen name="MenuItem" component={MenuItemsScreen} options={{
-            headerLeft: () => (<BackBtn navigation={navigation} />),
+            headerLeft: () => (<BackBtn navigation={navigation}/>),
             headerRight: () => (<HeaderBtnGroup navigation={navigation}/>),
             headerTitle: '',
             headerStatusBarHeight: 30,
@@ -50,7 +52,7 @@ const MenuStackNavigator = ({navigation}) => (
         }}
         />
         <MenuStack.Screen name="ProductItem" component={ProductItemScreen} options={{
-            headerLeft: () => (<BackBtn navigation={navigation} />),
+            headerLeft: () => (<BackBtn navigation={navigation}/>),
             headerTitle: '',
             headerStatusBarHeight: 30,
             headerTransparent: true,
@@ -59,7 +61,16 @@ const MenuStackNavigator = ({navigation}) => (
         }}
         />
         <MenuStack.Screen name="ProductCard" component={ProductCardScreen} options={{
-            headerLeft: () => (<BackBtn navigation={navigation} />),
+            headerLeft: () => (<BackBtn navigation={navigation}/>),
+            headerTitle: '',
+            headerStatusBarHeight: 30,
+            headerTransparent: true,
+            gestureDirection: 'horizontal-inverted',
+            gestureEnabled: false,
+        }}
+        />
+        <MenuStack.Screen name="Order" component={OrderScreen} options={{
+            headerLeft: () => (<BackBtn navigation={navigation}/>),
             headerTitle: '',
             headerStatusBarHeight: 30,
             headerTransparent: true,
@@ -83,7 +94,7 @@ const AuthStackNavigator = ({navigation}) => (
 export const Routes = () => {
     return (
         <NavigationContainer>
-            <Drawer.Navigator>
+            <Drawer.Navigator drawerContent={(props) => <DrawerContent {...props} />}>
                 <Drawer.Screen name="Menu" component={Tabs}/>
                 <Drawer.Screen name="Login" component={AuthStackNavigator}/>
             </Drawer.Navigator>
