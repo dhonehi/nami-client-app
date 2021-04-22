@@ -1,11 +1,26 @@
 import React, {useState} from "react";
-import {View, Text, TextInput, ScrollView, TouchableOpacity, TouchableWithoutFeedback, StyleSheet} from "react-native";
+import {
+    View,
+    Text,
+    TextInput,
+    ScrollView,
+    Alert,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    StyleSheet
+} from "react-native";
 import {headerHeight} from "../components/Header";
 import {RALEWAY_BOLD, RALEWAY_MEDIUM, RALEWAY_REGULAR} from "../fonts/fontsTypes";
 
 import {MaterialIcons, Ionicons} from '@expo/vector-icons';
 
+import {connect} from "react-redux";
+
+import {clearUserCard} from "../store/actions/userCard";
+
 import {DeliveryIcon, ShoppingBagIcon, MoneyIcon} from "../icons/orderIcons";
+
+import { useNavigation } from '@react-navigation/native';
 
 const Check = ({onClick, isChecked, disabled}) => {
     return (
@@ -15,7 +30,9 @@ const Check = ({onClick, isChecked, disabled}) => {
     )
 }
 
-const OrderScreen = (props) => {
+const OrderScreen = ({route: {params: {userCard}}, clearCard}) => {
+    const navigation = useNavigation()
+
     const [isDelivery, setIsDelivery] = useState(true)
     const [name, setName] = useState('')
     const [address, setAddress] = useState('')
@@ -24,6 +41,43 @@ const OrderScreen = (props) => {
 
     const deliveryClickHandler = () => {
         setIsDelivery(!isDelivery)
+    }
+
+    const createOrder = () => {
+        if (!name || !address || !phoneNumber) {
+            Alert.alert('Не все поля заполнены!')
+            return
+        }
+
+        const products = userCard.map(item => {
+            return {
+                product: item._id,
+                count: item.count
+            }
+        })
+
+        const requestData = {
+            products,
+            address,
+            phone: phoneNumber,
+            username: name,
+            additionalInformation,
+            delivery: isDelivery
+        }
+
+        fetch('https://namisushi.ru/api/order', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify(requestData)
+        }).then(response => {
+            if (response.ok) {
+                Alert.alert('Ваш заказ поступил в обработку!')
+                clearCard()
+                navigation.popToTop()
+            }
+        })
     }
 
     return (
@@ -89,7 +143,7 @@ const OrderScreen = (props) => {
                         </View>
                         <View style={styles.orderCard}>
                             <View style={styles.inputWrapper}>
-                                <Ionicons name="call" size={24} color="black" />
+                                <Ionicons name="call" size={24} color="black"/>
                                 <TextInput style={styles.orderInput} value={phoneNumber} onChangeText={setPhoneNumber}
                                            placeholder="Телефон" keyboardType="numeric"/>
                             </View>
@@ -103,7 +157,7 @@ const OrderScreen = (props) => {
                             </View>
                         </View>
                     </View>
-                    <TouchableOpacity style={styles.orderBtn}>
+                    <TouchableOpacity style={styles.orderBtn} onPress={createOrder}>
                         <Text style={styles.orderBtnText}>Заказать</Text>
                     </TouchableOpacity>
                 </ScrollView>
@@ -112,7 +166,15 @@ const OrderScreen = (props) => {
     )
 }
 
-export default OrderScreen
+const mapDispatchToProps = dispatch => {
+    return {
+        clearCard: () => {
+            dispatch(clearUserCard())
+        }
+    }
+}
+
+export default connect(null, mapDispatchToProps)(OrderScreen)
 
 const styles = StyleSheet.create({
     container: {

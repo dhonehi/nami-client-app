@@ -20,7 +20,6 @@ import MyTabBar from "./components/MyTabBar";
 import DrawerContent from "./components/DrawerContent";
 
 const MenuStack = createStackNavigator()
-//const ProfileScreen = createStackNavigator()
 const Drawer = createDrawerNavigator()
 const Tab = createBottomTabNavigator();
 

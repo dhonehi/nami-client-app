@@ -75,7 +75,9 @@ const ProductCardScreen = (props) => {
                 </ScrollView>
             </View>
             <View style={styles.createOrderBtnWrapper}>
-                <TouchableOpacity style={styles.createOrderBtn} onPress={() => props.navigation.push('Order')}>
+                <TouchableOpacity style={styles.createOrderBtn} onPress={() => props.navigation.push('Order', {
+                    userCard: props.userCard
+                })}>
                     <Text style={styles.createOrderBtnText}>Оформить за {getSumUserCard()} &#8381;</Text>
                 </TouchableOpacity>
             </View>

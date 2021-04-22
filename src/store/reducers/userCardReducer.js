@@ -1,4 +1,4 @@
-import {ADD_TO_USER_CARD, REMOVE_ALL_PRODUCT, REMOVE_FROM_USER_CARD} from "../actions/types";
+import {ADD_TO_USER_CARD, CLEAR_USER_CARD, REMOVE_ALL_PRODUCT, REMOVE_FROM_USER_CARD} from "../actions/types";
 
 const initialState = {
     userCard: []
@@ -34,6 +34,10 @@ const userCardReducer = (state = initialState, action) => {
         case REMOVE_ALL_PRODUCT:
             return {
                 userCard: state.userCard.filter(item => item._id !== action.payload._id)
+            }
+        case CLEAR_USER_CARD:
+            return {
+                userCard: []
             }
         default:
             return state
