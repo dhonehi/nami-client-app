@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {
     View,
     Text,
@@ -7,6 +7,7 @@ import {
     Alert,
     TouchableOpacity,
     TouchableWithoutFeedback,
+    AsyncStorage,
     StyleSheet
 } from "react-native";
 import {headerHeight} from "../components/Header";
@@ -20,7 +21,8 @@ import {clearUserCard} from "../store/actions/userCard";
 
 import {DeliveryIcon, ShoppingBagIcon, MoneyIcon} from "../icons/orderIcons";
 
-import { useNavigation } from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
+import Preloader from "../router/components/Preloader";
 
 const Check = ({onClick, isChecked, disabled}) => {
     return (
@@ -38,6 +40,7 @@ const OrderScreen = ({route: {params: {userCard}}, clearCard}) => {
     const [address, setAddress] = useState('')
     const [phoneNumber, setPhoneNumber] = useState('')
     const [additionalInformation, setAdditionalInformation] = useState('')
+    const [loading, setLoading] = useState(false)
 
     const deliveryClickHandler = () => {
         setIsDelivery(!isDelivery)
@@ -65,14 +68,33 @@ const OrderScreen = ({route: {params: {userCard}}, clearCard}) => {
             delivery: isDelivery
         }
 
+        setLoading(true)
+
         fetch('https://namisushi.ru/api/order', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'
             },
             body: JSON.stringify(requestData)
-        }).then(response => {
+        }).then(async response => {
             if (response.ok) {
+                const order = {
+                    date: Date.now(),
+                    address,
+                    additionalInformation,
+                    products: userCard
+                }
+
+                const prevOrders = JSON.parse(await AsyncStorage.getItem('orders'))
+                let newOrders = []
+
+                if (prevOrders && prevOrders.length) {
+                    newOrders = [...prevOrders, order]
+                }
+
+                AsyncStorage.setItem('orders', JSON.stringify(newOrders))
+
+                setLoading(false)
                 Alert.alert('Ваш заказ поступил в обработку!')
                 clearCard()
                 navigation.popToTop()
@@ -162,6 +184,7 @@ const OrderScreen = ({route: {params: {userCard}}, clearCard}) => {
                     </TouchableOpacity>
                 </ScrollView>
             </View>
+            {loading && <Preloader/>}
         </View>
     )
 }
@@ -253,5 +276,5 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 15,
         fontFamily: RALEWAY_BOLD
-    }
+    },
 })

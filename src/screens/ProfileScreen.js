@@ -1,12 +1,14 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {View, Text, Image, TouchableOpacity, StyleSheet} from "react-native";
 
 import {Entypo} from '@expo/vector-icons';
 
+import {connect} from "react-redux";
+
 import {ProfileBannerImg} from "../components/ProfileBannerImg";
 import {RALEWAY_BOLD, RALEWAY_EXTRA_BOLD, RALEWAY_MEDIUM} from "../fonts/fontsTypes";
 
-const ProfileScreen = () => {
+const ProfileScreen = ({navigation, isLoggedIn}) => {
     return (
         <View style={styles.wrapper}>
             <View style={styles.content}>
@@ -16,10 +18,10 @@ const ProfileScreen = () => {
                     <Text style={styles.description}>Самые вкусные и выгодные постоянные акции и скидки ждут вашего
                         звонка! <Entypo name="heart" size={18} color="#DC1616"/></Text>
                     <View style={styles.btns}>
-                        <TouchableOpacity style={styles.btn}>
+                        <TouchableOpacity style={styles.btn} onPress={() => navigation.push('Login')}>
                             <Text style={styles.btnText}>Вход в систему</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.btn}>
+                        <TouchableOpacity style={[styles.btn, {marginBottom: 20}]} onPress={() => navigation.push('Register')}>
                             <Text style={styles.btnText}>Зарегестрироваться</Text>
                         </TouchableOpacity>
                     </View>
@@ -30,7 +32,13 @@ const ProfileScreen = () => {
     )
 }
 
-export default ProfileScreen
+const mapStateToProps = state => {
+    return {
+        isLoggedIn: state.auth.isLoggedIn
+    }
+}
+
+export default connect(mapStateToProps)(ProfileScreen)
 
 const styles = StyleSheet.create({
     wrapper: {
@@ -87,6 +95,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#1B4965',
         borderRadius: 4,
         width: '100%',
+        zIndex: 20,
         justifyContent: 'center',
         alignItems: 'center'
     },

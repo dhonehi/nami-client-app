@@ -54,6 +54,7 @@ export default function MyTabBar({state, descriptors, navigation}) {
                         >
                             {label === 'Меню' && <MenuIcon/>}
                             {label === 'Профиль' && <ProfileIcon/>}
+                            {label === 'Заказы' && <OrdersIcon />}
                         </TouchableOpacity>
                     );
                 }

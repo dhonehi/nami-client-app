@@ -1,6 +1,6 @@
-import React, {useEffect} from 'react'
+import React, {useEffect, useState} from 'react'
 
-import {TouchableOpacity, View, Text, StyleSheet} from "react-native";
+import {TouchableOpacity, View, Text, TextInput, StyleSheet} from "react-native";
 
 import {Feather, SimpleLineIcons, FontAwesome} from "@expo/vector-icons";
 import HamburgerSvg from "../icons/HamburgerSvg";
@@ -13,8 +13,8 @@ const HamburgerButton = ({navigation}) => (
     </TouchableOpacity>
 )
 
-const SearchBtn = () => (
-    <TouchableOpacity style={[styles.btnWrapper]}>
+const SearchBtn = ({onClick}) => (
+    <TouchableOpacity style={[styles.btnWrapper]} onPress={onClick}>
         <Feather name="search" size={30} color="black"/>
     </TouchableOpacity>
 )
@@ -28,18 +28,37 @@ const CartBtn = ({userCard, navigation}) => (
     </TouchableOpacity>
 )
 
-const HeaderBtnGroup = (props) => (
-    <View style={styles.btnGroup}>
-        <SearchBtn/>
-        <CartBtn userCard={props.userCard} navigation={props.navigation}/>
-    </View>
-)
+const SearchBar = () => {
+    return (
+        <View style={{flexDirection: 'row', width: '100%', flex: 1, justifyContent: 'flex-start'}}>
+            <TextInput value="asd" />
+        </View>
+    )
+}
+
+const HeaderBtnGroup = (props) => {
+    const [isShowSearchBar, setIsShowSearchBar] = useState(false)
+
+    const showSearchBar = () => {
+        setIsShowSearchBar(true)
+        props.onClick()
+    }
+
+    if (isShowSearchBar) return (<SearchBar />)
+    else
+        return (
+            <View style={styles.btnGroup}>
+                <SearchBtn onClick={showSearchBar}/>
+                <CartBtn userCard={props.userCard} navigation={props.navigation}/>
+            </View>
+        )
+}
 
 const BackBtn = ({navigation}) => (
     <TouchableOpacity
         onPress={() => navigation.goBack()}
         style={[styles.btnWrapper, styles.backBtn]}>
-        <FontAwesome name="long-arrow-left" size={24} color="black" />
+        <FontAwesome name="long-arrow-left" size={24} color="black"/>
     </TouchableOpacity>
 )
 
