@@ -8,14 +8,30 @@ import {connect} from "react-redux";
 import TranslateAnim from "../animations/TranslateAnim";
 
 import {addToUserCard, removeAllProduct, removeFromUserCard} from "../store/actions/userCard";
+import {addToFavourites, removeFromFavourites} from "../store/actions/favourites";
 import {RALEWAY_MEDIUM, RALEWAY_REGULAR} from "../fonts/fontsTypes";
 
-const FavouriteBtn = () => {
-    const [isClickOnHeart, setIsClickOnHeart] = useState(false)
+const FavouriteBtn = ({favourites, addProductToFavourites, removeProductFromFavourites, product}) => {
+    let hasFavourite = false
+
+    if (favourites.find(favourite => favourite._id === product._id)) hasFavourite = true
+
+    const [isClickOnHeart, setIsClickOnHeart] = useState(hasFavourite)
+
+    const favouriteHandler = () => {
+        if (!isClickOnHeart) {
+            addProductToFavourites(product)
+            setIsClickOnHeart(true)
+        } else {
+            removeProductFromFavourites(product)
+            setIsClickOnHeart(false)
+        }
+    }
+
 
     return (
         <TouchableWithoutFeedback
-            onPress={() => setIsClickOnHeart(!isClickOnHeart)}>
+            onPress={favouriteHandler}>
             <View style={{
                 backgroundColor: 'white',
                 height: 50,
@@ -115,7 +131,7 @@ const CardBtnGroup = (props) => {
 
     return (
         <View style={styles.container}>
-            <FavouriteBtn/>
+            <FavouriteBtn {...props}/>
             {!isInCard() ? <AddToCardBth onClick={() => props.addToCard(props.product)}/> :
                 <ActionsWithProduct {...props}/>}
         </View>
@@ -125,6 +141,7 @@ const CardBtnGroup = (props) => {
 const mapStateToProps = state => {
     return {
         userCard: state.userCard.userCard,
+        favourites: state.favourites.favourites
     }
 }
 
@@ -138,6 +155,12 @@ const mapDispatchToProps = dispatch => {
         },
         removeAll: (product) => {
             dispatch(removeAllProduct(product))
+        },
+        addProductToFavourites: (product) => {
+            dispatch(addToFavourites(product))
+        },
+        removeProductFromFavourites: (product) => {
+            dispatch(removeFromFavourites(product))
         }
     }
 }

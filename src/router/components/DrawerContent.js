@@ -1,8 +1,8 @@
-import {View, Text, Image, StyleSheet} from "react-native";
+import {View, Text, Image, TouchableOpacity, StyleSheet} from "react-native";
 
 import {AntDesign, Entypo} from '@expo/vector-icons';
 
-import React from "react";
+import React, {useEffect} from "react";
 import {
     DrawerContentScrollView,
     DrawerItemList,
@@ -35,8 +35,13 @@ function CustomDrawerContent(props) {
                 </View>
                 <View style={styles.drawerSection}>
                     <View style={styles.drawerItem}>
-                        <AntDesign style={styles.icon} name="heart" size={20} color="rgba(255, 255, 255, 0.6)"/>
-                        <Text style={styles.drawerText}>Избранное</Text>
+                        <TouchableOpacity style={{flexDirection: 'row'}}
+                                          onPress={() => props.navigation.navigate('Menu', {
+                                              screen: 'Favourites',
+                                          })}>
+                            <AntDesign style={styles.icon} name="heart" size={20} color="rgba(255, 255, 255, 0.6)"/>
+                            <Text style={styles.drawerText}>Избранное</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </DrawerContentScrollView>

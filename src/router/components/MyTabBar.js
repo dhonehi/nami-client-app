@@ -8,6 +8,7 @@ import {MenuIcon, OrdersIcon, ProfileIcon} from "../../icons/tabIcons";
 export default function MyTabBar({state, descriptors, navigation}) {
     const index = state?.routes[0]?.state?.index
     const isProductCard = state?.routes[0]?.state?.routes?.find(route => route.name === 'ProductCard') !== undefined
+    const isFavourites = state?.routes[0]?.state?.routes?.find(route => route.name === 'Favourites') !== undefined
     if (index >= 0) {
         const currentRoute = state.routes[0].state.routeNames[index]
         if (currentRoute === 'ProductItem' && !isProductCard) return <View/>
@@ -38,7 +39,7 @@ export default function MyTabBar({state, descriptors, navigation}) {
                     }
                 };
 
-                if (isFocused) {
+                if (isFocused && !isFavourites) {
                     return (
                         <View style={styles.focusedItem} key={index}>
                             <Text style={styles.label}>{label}</Text>

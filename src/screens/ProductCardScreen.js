@@ -9,9 +9,25 @@ import {connect} from "react-redux";
 import {RALEWAY_BOLD, RALEWAY_MEDIUM, RALEWAY_REGULAR} from "../fonts/fontsTypes";
 import {AntDesign, Ionicons} from "@expo/vector-icons";
 import {headerHeight} from "../components/Header";
+import Empty from "../components/Empty";
+import {addToFavourites, removeFromFavourites} from "../store/actions/favourites";
 
 const ProductCard = (props) => {
-    const [isClickOnHeart, setIsClickOnHeart] = useState(false)
+    let hasFavourite = false
+
+    if (props.favourites.find(favourite => favourite._id === props.product._id)) hasFavourite = true
+
+    const [isClickOnHeart, setIsClickOnHeart] = useState(hasFavourite)
+
+    const favouriteHandler = () => {
+        if (!isClickOnHeart) {
+            props.addProductToFavourites(props.product)
+            setIsClickOnHeart(true)
+        } else {
+            props.removeProductFromFavourites(props.product)
+            setIsClickOnHeart(false)
+        }
+    }
 
     return (
         <View style={[styles.productCardContainer, {marginTop: props.index !== 0 ? 14 : 0}]}>
@@ -25,7 +41,7 @@ const ProductCard = (props) => {
                     <View style={{flex: 1}}>
                         <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                             <Text style={styles.productTitle}>{props.product.title}</Text>
-                            <TouchableOpacity onPress={() => setIsClickOnHeart(!isClickOnHeart)}>
+                            <TouchableOpacity onPress={favouriteHandler}>
                                 {isClickOnHeart ?
                                     <AntDesign name="heart" size={24} color="red"/> :
                                     <AntDesign name="hearto" size={24} color="black"/>}
@@ -68,26 +84,30 @@ const ProductCardScreen = (props) => {
         <View style={{flex: 1, marginTop: headerHeight}}>
             <View style={{paddingHorizontal: 15, flex: 1}}>
                 <Text style={styles.title}>Корзина</Text>
-                <Text style={styles.subtitle}>Сумма: {getSumUserCard()} &#8381;</Text>
+                {props.userCard.length > 0 &&
+                <Text style={styles.subtitle}>Сумма: {getSumUserCard()} &#8381;</Text> &&
                 <ScrollView style={{flex: 1, marginBottom: 20, marginTop: 20}}>
                     {props.userCard.map((item, index) => <ProductCard {...props} index={index} product={item}
                                                                       key={item._id}/>)}
-                </ScrollView>
+                </ScrollView>}
+                {props.userCard.length === 0 && <Empty/>}
             </View>
+            {props.userCard.length > 0 &&
             <View style={styles.createOrderBtnWrapper}>
                 <TouchableOpacity style={styles.createOrderBtn} onPress={() => props.navigation.push('Order', {
                     userCard: props.userCard
                 })}>
                     <Text style={styles.createOrderBtnText}>Оформить за {getSumUserCard()} &#8381;</Text>
                 </TouchableOpacity>
-            </View>
+            </View>}
         </View>
     )
 }
 
 const mapStateToProps = state => {
     return {
-        userCard: state.userCard.userCard
+        userCard: state.userCard.userCard,
+        favourites: state.favourites.favourites
     }
 }
 
@@ -101,6 +121,12 @@ const mapDispatchToProps = dispatch => {
         },
         removeAll: (product) => {
             dispatch(removeAllProduct(product))
+        },
+        addProductToFavourites: (product) => {
+            dispatch(addToFavourites(product))
+        },
+        removeProductFromFavourites: (product) => {
+            dispatch(removeFromFavourites(product))
         }
     }
 }

@@ -21,7 +21,7 @@ export const Register = ({navigation}) => {
             return
         }
 
-        if(password.length < 6) {
+        if (password.length < 6) {
             Alert.alert('Пароль должен состоять не менее чем из 6 символов!')
             return
         }
@@ -43,8 +43,10 @@ export const Register = ({navigation}) => {
                 if (response.ok) {
                     Alert.alert('Регистрация прошла успешно!')
                     navigation.replace('Login')
+                } else {
+                    if (response.status === 400) Alert.alert('Email уже занят!')
+                    else Alert.alert('Что-то пошло не так')
                 }
-                else Alert.alert('Неверный логин!')
             })
             .finally(() => {
                 setLoading(false)

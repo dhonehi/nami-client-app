@@ -9,27 +9,34 @@ import {ProfileBannerImg} from "../components/ProfileBannerImg";
 import {RALEWAY_BOLD, RALEWAY_EXTRA_BOLD, RALEWAY_MEDIUM} from "../fonts/fontsTypes";
 
 const ProfileScreen = ({navigation, isLoggedIn}) => {
-    return (
-        <View style={styles.wrapper}>
-            <View style={styles.content}>
-                <ProfileBannerImg/>
-                <View style={styles.mainContent}>
-                    <Text style={styles.title}>Давайте познакомимся!</Text>
-                    <Text style={styles.description}>Самые вкусные и выгодные постоянные акции и скидки ждут вашего
-                        звонка! <Entypo name="heart" size={18} color="#DC1616"/></Text>
-                    <View style={styles.btns}>
-                        <TouchableOpacity style={styles.btn} onPress={() => navigation.push('Login')}>
-                            <Text style={styles.btnText}>Вход в систему</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={[styles.btn, {marginBottom: 20}]} onPress={() => navigation.push('Register')}>
-                            <Text style={styles.btnText}>Зарегестрироваться</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </View>
-            <Image style={styles.wavesImg} source={require('../../assets/waves.png')}/>
+    if (isLoggedIn) return (
+        <View>
+            <Text>sadasd</Text>
         </View>
     )
+    else
+        return (
+            <View style={styles.wrapper}>
+                <View style={styles.content}>
+                    <ProfileBannerImg/>
+                    <View style={styles.mainContent}>
+                        <Text style={styles.title}>Давайте познакомимся!</Text>
+                        <Text style={styles.description}>Самые вкусные и выгодные постоянные акции и скидки ждут вашего
+                            звонка! <Entypo name="heart" size={18} color="#DC1616"/></Text>
+                        <View style={styles.btns}>
+                            <TouchableOpacity style={styles.btn} onPress={() => navigation.push('Login')}>
+                                <Text style={styles.btnText}>Вход в систему</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={[styles.btn, {marginBottom: 20}]}
+                                              onPress={() => navigation.push('Register')}>
+                                <Text style={styles.btnText}>Зарегестрироваться</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+                <Image style={styles.wavesImg} source={require('../../assets/waves.png')}/>
+            </View>
+        )
 }
 
 const mapStateToProps = state => {

@@ -9,12 +9,12 @@ import {MailIcon, LockIcon} from "../icons/authIcons";
 import Preloader from "../router/components/Preloader";
 import {login} from "../store/actions/auth";
 
-const Login = (props) => {
+const Login = ({login}) => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [loading, setLoading] = useState(false)
 
-    const login = () => {
+    const logIn = () => {
         if (!email.length || !password.length) {
             Alert.alert('Не все поля заполнены!')
             return
@@ -29,11 +29,13 @@ const Login = (props) => {
             body: JSON.stringify({email, password})
         })
             .then(response => {
-                if (response.ok) return response.json()
-                else Alert.alert('Неверный логин или пароль!')
+                if (!response.ok) {
+                    if (response.status === 400) Alert.alert('Неверный email или пароль!')
+                    else Alert.alert('Что-то пошло не так!')
+                }
             })
             .then(responseJson => {
-                console.log(responseJson)
+                if (responseJson) login(responseJson)
             })
             .finally(() => {
                 setLoading(false)
@@ -56,7 +58,7 @@ const Login = (props) => {
                                    placeholder="Пароль"/>
                     </View>
                 </View>
-                <TouchableOpacity onPress={login}>
+                <TouchableOpacity onPress={logIn}>
                     <View style={styles.btn}>
                         <Text style={styles.btnText}>Войти в систему</Text>
                     </View>

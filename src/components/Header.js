@@ -19,7 +19,7 @@ const SearchBtn = ({onClick}) => (
     </TouchableOpacity>
 )
 
-const CartBtn = ({userCard, navigation}) => (
+const CartBtn = ({userCard, navigation, backToFav}) => (
     <TouchableOpacity
         onPress={() => navigation.navigate('ProductCard')}
         style={[styles.btnWrapper, styles.cartBtn]}>
@@ -48,7 +48,7 @@ const HeaderBtnGroup = (props) => {
     else
         return (
             <View style={styles.btnGroup}>
-                <SearchBtn onClick={showSearchBar}/>
+                {props.isShowSearch && <SearchBtn onClick={showSearchBar}/>}
                 <CartBtn userCard={props.userCard} navigation={props.navigation}/>
             </View>
         )

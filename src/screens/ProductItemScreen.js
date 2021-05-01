@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {View, Text, Image, TouchableWithoutFeedback, StyleSheet} from "react-native";
+import {View, Text, Image, TouchableWithoutFeedback, AsyncStorage, StyleSheet} from "react-native";
 
 import {connect} from "react-redux";
 
@@ -12,6 +12,10 @@ import {headerHeight} from "../components/Header";
 
 const FavouriteBtn = () => {
     const [isClickOnHeart, setIsClickOnHeart] = useState(false)
+
+    const addToFavourite = () => {
+
+    }
 
     return (
         <TouchableWithoutFeedback
@@ -26,6 +30,12 @@ const FavouriteBtn = () => {
 }
 
 const ProductItemScreen = ({route: {params: {product}}}) => {
+    const addToFavourite = () => {
+        AsyncStorage.getItem('favourites').then(response => {
+            console.log(response)
+        })
+    }
+
     return (
         <View style={styles.productContainer}>
             <View style={{alignItems: 'center', width: '100%'}}>
