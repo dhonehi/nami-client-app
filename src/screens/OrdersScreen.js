@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from "react";
-import {View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, AsyncStorage} from "react-native";
+import {View, Text, StyleSheet, Image, TouchableOpacity} from "react-native";
 import {headerHeight} from "../components/Header";
 import {AntDesign, Ionicons} from "@expo/vector-icons";
 import {ProductCountSelect} from "../components/CardBtnGroup";
 import {RALEWAY_BOLD, RALEWAY_MEDIUM, RALEWAY_REGULAR} from "../fonts/fontsTypes";
+import {CommonActions} from "@react-navigation/native";
 
 const ProductCard = (props) => {
     const [isClickOnHeart, setIsClickOnHeart] = useState(false)
@@ -48,12 +49,17 @@ const ProductCard = (props) => {
     )
 }
 
-export default function OrdersScreen(props) {
+export default function OrdersScreen({navigation}) {
     useEffect(() => {
-        AsyncStorage.getItem('orders').then(response => {
-            console.log(response)
-        })
-    })
+        navigation.dispatch(
+            CommonActions.reset({
+                index: 0,
+                routes: [
+                    { name: 'Profile' },
+                ],
+            })
+        )
+    }, [])
 
     return (
         <View style={{flex: 1, marginTop: headerHeight}}>
