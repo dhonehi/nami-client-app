@@ -1,4 +1,5 @@
 import React, {useState} from "react";
+import MapView from 'react-native-maps'
 import {
     View,
     Text,
@@ -8,6 +9,7 @@ import {
     TextInput,
     AsyncStorage,
     Alert,
+    Dimensions,
     ScrollView
 } from "react-native";
 import {RALEWAY_BOLD, RALEWAY_MEDIUM} from "../fonts/fontsTypes";
@@ -146,6 +148,12 @@ const UserProfile = ({userInfo}) => {
             </TouchableOpacity>
         </View>
     )
+
+   /* return (
+        <View style={styles.container}>
+            <MapView style={styles.map} />
+        </View>
+    )*/
 }
 
 const mapStateToProps = state => {
@@ -161,6 +169,16 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingHorizontal: 15,
         backgroundColor: '#214d67',
+    },
+    container: {
+        flex: 1,
+        backgroundColor: '#fff',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    map: {
+        width: Dimensions.get('window').width,
+        height: Dimensions.get('window').height,
     },
     header: {
         marginTop: 50,
