@@ -1,10 +1,12 @@
 import React, {useEffect, useState} from "react";
-import {View, Text, StyleSheet, Image, TouchableOpacity} from "react-native";
+import {View, Text, StyleSheet, Image, TouchableOpacity, Alert} from "react-native";
 import {headerHeight} from "../components/Header";
 import {AntDesign, Ionicons} from "@expo/vector-icons";
 import {ProductCountSelect} from "../components/CardBtnGroup";
 import {RALEWAY_BOLD, RALEWAY_MEDIUM, RALEWAY_REGULAR} from "../fonts/fontsTypes";
 import {CommonActions} from "@react-navigation/native";
+
+import {connect} from "react-redux";
 
 const ProductCard = (props) => {
     const [isClickOnHeart, setIsClickOnHeart] = useState(false)
@@ -49,21 +51,38 @@ const ProductCard = (props) => {
     )
 }
 
-export default function OrdersScreen({navigation}) {
+const OrdersScreen = ({navigation, isLoggedIn, userInfo, sessionId}) => {
     useEffect(() => {
-        navigation.dispatch(
-            CommonActions.reset({
-                index: 0,
-                routes: [
-                    { name: 'Profile' },
-                ],
+        if (!isLoggedIn) {
+            navigation.dispatch(
+                CommonActions.reset({
+                    index: 0,
+                    routes: [
+                        {name: 'Profile'},
+                    ],
+                })
+            )
+        } else {
+            console.log(sessionId)
+            fetch('https://namisushi.ru/api/orders', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8',
+                    'Cookie': `${sessionId}`
+                },
             })
-        )
+                .then(response => {
+                    return response.json()
+                })
+                .then(responseJson => {
+                    console.log(responseJson)
+                })
+        }
     }, [])
 
     return (
         <View style={{flex: 1, marginTop: headerHeight}}>
-           {/* <View style={{paddingHorizontal: 15, flex: 1}}>
+            {/* <View style={{paddingHorizontal: 15, flex: 1}}>
                 <Text style={styles.title}>Корзина</Text>
                 <Text style={styles.subtitle}>Сумма: 46546 &#8381;</Text>
                 <ScrollView style={{flex: 1, marginBottom: 20, marginTop: 20}}>
@@ -74,6 +93,16 @@ export default function OrdersScreen({navigation}) {
         </View>
     )
 }
+
+const mapStateToProps = state => {
+    return {
+        isLoggedIn: state.auth.isLoggedIn,
+        userInfo: state.auth.userInfo,
+        sessionId: state.auth.sessionId
+    }
+}
+
+export default connect(mapStateToProps)(OrdersScreen)
 
 const styles = StyleSheet.create({
     container: {

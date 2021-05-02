@@ -6,7 +6,8 @@ let isLoggedIn = false
 
 let initialState = {
     isLoggedIn,
-    userInfo: null
+    userInfo: null,
+    sessionId: null
 }
 
 AsyncStorage.getItem('isLoggedIn').then(response => {
@@ -17,9 +18,11 @@ AsyncStorage.getItem('isLoggedIn').then(response => {
 const authReducer = (state = initialState, action) => {
     switch (action.type) {
         case LOGIN: {
+            AsyncStorage.setItem('isLoggedIn', 'true')
             return {
                 isLoggedIn: true,
-                userInfo: action.payload
+                userInfo: action.payload.userInfo,
+                sessionId: action.payload.sessionId
             }
         }
         default:

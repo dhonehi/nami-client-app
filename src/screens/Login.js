@@ -1,11 +1,11 @@
 import React, {useState} from 'react'
-import {Text, TouchableOpacity, View, StyleSheet, TextInput, Alert} from "react-native";
+import {Alert, StyleSheet, Text, TextInput, TouchableOpacity, View} from "react-native";
 import {ProfileBannerImg} from "../components/ProfileBannerImg";
 import {RALEWAY_BOLD} from "../fonts/fontsTypes";
 
 import {connect} from "react-redux";
 
-import {MailIcon, LockIcon} from "../icons/authIcons";
+import {LockIcon, MailIcon} from "../icons/authIcons";
 import Preloader from "../router/components/Preloader";
 import {login} from "../store/actions/auth";
 
@@ -14,6 +14,10 @@ const Login = ({login}) => {
     const [password, setPassword] = useState('')
     const [loading, setLoading] = useState(false)
 
+    const getSessionId = (cookie) => {
+        return cookie.split(';')[0].slice(10)
+    }
+
     const logIn = () => {
         if (!email.length || !password.length) {
             Alert.alert('Не все поля заполнены!')
@@ -21,21 +25,28 @@ const Login = ({login}) => {
         }
 
         setLoading(true)
-        fetch('https://namisushi.ru/api/login', {
+        fetch('https://namisushi.ru/api/signin', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json;charset=utf-8'
             },
             body: JSON.stringify({email, password})
         })
-            .then(response => {
+            .then(async response => {
                 if (!response.ok) {
                     if (response.status === 400) Alert.alert('Неверный email или пароль!')
                     else Alert.alert('Что-то пошло не так!')
+                } else {
+                    return {
+                        userInfo: await response.json(),
+                        sessionId: getSessionId(response.headers.get('set-cookie'))
+                    }
                 }
             })
             .then(responseJson => {
-                if (responseJson) login(responseJson)
+                if (responseJson) {
+                    login(responseJson)
+                }
             })
             .finally(() => {
                 setLoading(false)

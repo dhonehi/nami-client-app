@@ -6,14 +6,12 @@ import {Entypo} from '@expo/vector-icons';
 import {connect} from "react-redux";
 
 import {ProfileBannerImg} from "../components/ProfileBannerImg";
+import UserProfile from "../components/UserProfile";
 import {RALEWAY_BOLD, RALEWAY_EXTRA_BOLD, RALEWAY_MEDIUM} from "../fonts/fontsTypes";
 
 const ProfileScreen = ({navigation, isLoggedIn}) => {
-    if (isLoggedIn) return (
-        <View>
-            <Text>sadasd</Text>
-        </View>
-    )
+    if (isLoggedIn) return <UserProfile />
+
     else
         return (
             <View style={styles.wrapper}>

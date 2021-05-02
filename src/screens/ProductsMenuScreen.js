@@ -9,18 +9,6 @@ import salads from '../../assets/salads.png'
 import sets from '../../assets/sets.png'
 import sushi from '../../assets/sushi.png'
 
-const MenuListItem = ({navigation}) => {
-    return (
-        <View>
-            <TouchableOpacity style={styles.label}
-                              onPress={() => navigation.push('MenuItem')}><Text>Роллы</Text></TouchableOpacity>
-            <TouchableOpacity style={styles.label}><Text>Суши и гунканы</Text></TouchableOpacity>
-            <TouchableOpacity style={styles.label}><Text>Сеты</Text></TouchableOpacity>
-            <TouchableOpacity style={styles.label}><Text>Лапша и рис</Text></TouchableOpacity>
-        </View>
-    )
-}
-
 export const ProductsMenuScreen = ({navigation}) => {
     const [categories, setCategories] = useState({loading: true})
     const images = [rols, rice, salads, sets, sushi]
@@ -33,7 +21,12 @@ export const ProductsMenuScreen = ({navigation}) => {
                     loading: false,
                     categoryList: responseJson
                 })
-            })
+            }).catch(() => {
+                setCategories({
+                    loading: false,
+                    categoryList: []
+                })
+        })
     }, [])
 
     if (categories.loading) {

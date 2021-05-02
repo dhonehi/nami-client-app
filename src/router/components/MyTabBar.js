@@ -4,6 +4,7 @@ import {Text, TouchableOpacity, View, StyleSheet} from "react-native";
 import {RALEWAY_BOLD} from "../../fonts/fontsTypes";
 
 import {MenuIcon, OrdersIcon, ProfileIcon} from "../../icons/tabIcons";
+import {CommonActions} from "@react-navigation/native";
 
 export default function MyTabBar({state, descriptors, navigation}) {
     const index = state?.routes[0]?.state?.index
@@ -35,7 +36,15 @@ export default function MyTabBar({state, descriptors, navigation}) {
                     });
 
                     if (!isFocused && !event.defaultPrevented) {
-                        navigation.navigate(route.name);
+                        navigation.dispatch(
+                            CommonActions.reset({
+                                index: 0,
+                                routes: [
+                                    {name: route.name},
+                                ],
+                            })
+                        )
+                        //navigation.navigate(route.name);
                     }
                 };
 

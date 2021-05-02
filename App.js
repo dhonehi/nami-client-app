@@ -8,7 +8,15 @@ import {Routes} from "./src/router/Routes"
 
 import configureStore from "./src/store/store";
 
+import {io} from "socket.io-client";
+
 const store = configureStore()
+
+const socket = io.connect('https://namisushi.ru', {path: '/ws'})
+
+socket.on('connection', msg => console.log('connection', msg))
+socket.on('errors', msg => console.log('errors', msg))
+socket.on('disconnect', msg => console.log('disconnect', msg))
 
 export default function App() {
     const [loaded] = useFonts({
