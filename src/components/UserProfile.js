@@ -1,10 +1,25 @@
 import React, {useState} from "react";
-import {View, Text, StyleSheet, Image, TouchableOpacity, TextInput, ScrollView} from "react-native";
+import {
+    View,
+    Text,
+    StyleSheet,
+    Image,
+    TouchableOpacity,
+    TextInput,
+    AsyncStorage,
+    Alert,
+    ScrollView
+} from "react-native";
 import {RALEWAY_BOLD, RALEWAY_MEDIUM} from "../fonts/fontsTypes";
-import {MailIcon} from "../icons/authIcons";
 import {Entypo, Ionicons, MaterialIcons} from '@expo/vector-icons';
 
-const UserProfile = () => {
+import {connect} from "react-redux";
+
+import ImagePicker from '../components/ImagePicker'
+
+const UserProfile = ({userInfo}) => {
+    let imageUri = userInfo?.picture || null
+
     const [userName, setUserName] = useState('')
     const [phone, setPhone] = useState('')
     const [addresses, setAddresses] = useState([''])
@@ -30,6 +45,43 @@ const UserProfile = () => {
         setPhone('')
     }
 
+    const getImageUriData = () => {
+        let localUri = imageUri
+        let filename = localUri.split('/').pop()
+
+        let match = /\.(\w+)$/.exec(filename)
+        let type = match ? `image/${match[1]}` : `image`
+
+        return {uri: localUri, name: filename, type}
+    }
+
+    const onPickImage = (uri) => {
+        imageUri = uri
+    }
+
+    const patchUserInfo = () => {
+        if (!userName) Alert.alert('Внимание', 'Имя не может быть пустым!')
+        else {
+            const requestData = new FormData()
+
+            requestData.append('name', userName)
+            if (imageUri) requestData.append('picture', imageUri)
+            if (phone) requestData.append('phone', phone)
+
+            const availableAddresses = []
+            addresses.forEach(address => {
+                if (address) availableAddresses.push({
+                    address,
+                    alias: address
+                })
+            })
+
+            if (availableAddresses.length)
+                requestData.append('addresses', JSON.stringify(availableAddresses))
+
+            console.log(requestData)
+        }
+    }
 
     return (
         <View style={styles.wrapper}>
@@ -41,10 +93,7 @@ const UserProfile = () => {
                 </View>
             </View>
             <View style={styles.avatarWrapper}>
-                <Image source={require('../../assets/user-avatar.png')}/>
-                <TouchableOpacity>
-                    <Text style={styles.removeImageBtn}>Удалить фотографию</Text>
-                </TouchableOpacity>
+                <ImagePicker onPick={onPickImage}/>
             </View>
             <ScrollView style={{flex: 1}}>
                 <View style={styles.userInfoSection}>
@@ -92,12 +141,20 @@ const UserProfile = () => {
                     </TouchableOpacity>}
                 </View>
             </ScrollView>
-            <TouchableOpacity style={styles.saveBtn}>
+            <TouchableOpacity style={styles.saveBtn} onPress={patchUserInfo}>
                 <Text style={styles.saveBtnText}>Сохранить</Text>
             </TouchableOpacity>
         </View>
     )
 }
+
+const mapStateToProps = state => {
+    return {
+        userInfo: state.auth.userInfo
+    }
+}
+
+export default connect(mapStateToProps)(UserProfile)
 
 const styles = StyleSheet.create({
     wrapper: {
@@ -137,10 +194,6 @@ const styles = StyleSheet.create({
         paddingLeft: 15,
         flexDirection: 'row',
         alignItems: 'center'
-    },
-    removeImageBtn: {
-        color: 'white',
-        marginLeft: 20
     },
     userInfoSection: {
         marginTop: 20
@@ -192,6 +245,3 @@ const styles = StyleSheet.create({
         color: 'white'
     }
 })
-
-export default UserProfile
-
