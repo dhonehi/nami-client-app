@@ -9,14 +9,12 @@ import {LockIcon, MailIcon} from "../icons/authIcons";
 import Preloader from "../router/components/Preloader";
 import {login} from "../store/actions/auth";
 
-const Login = ({login}) => {
+import {signin} from "../api/api";
+
+const Login = ({login, navigation}) => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [loading, setLoading] = useState(false)
-
-    const getSessionId = (cookie) => {
-        return cookie.split(';')[0].slice(10)
-    }
 
     const logIn = () => {
         if (!email.length || !password.length) {
@@ -25,21 +23,17 @@ const Login = ({login}) => {
         }
 
         setLoading(true)
-        fetch('https://namisushi.ru/api/signin', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json;charset=utf-8'
-            },
-            body: JSON.stringify({email, password})
-        })
+
+        signin({email, password})
             .then(async response => {
                 if (!response.ok) {
                     if (response.status === 400) Alert.alert('Неверный email или пароль!')
                     else Alert.alert('Что-то пошло не так!')
                 } else {
+                    navigation.replace('Profile')
                     return {
                         userInfo: await response.json(),
-                        sessionId: getSessionId(response.headers.get('set-cookie'))
+                        sessionId: response.headers.get('set-cookie')
                     }
                 }
             })

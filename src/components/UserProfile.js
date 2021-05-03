@@ -4,10 +4,8 @@ import {
     View,
     Text,
     StyleSheet,
-    Image,
     TouchableOpacity,
     TextInput,
-    AsyncStorage,
     Alert,
     Dimensions,
     ScrollView
@@ -18,22 +16,33 @@ import {Entypo, Ionicons, MaterialIcons} from '@expo/vector-icons';
 import {connect} from "react-redux";
 
 import ImagePicker from '../components/ImagePicker'
+import {logout, setUserInfo} from "../store/actions/auth";
+import {signout} from "../api/api";
+import Preloader from "../router/components/Preloader";
 
-const UserProfile = ({userInfo}) => {
-    let imageUri = userInfo?.picture || null
+import {patchUserInfo, getUserInfo} from "../api/api";
 
-    const [userName, setUserName] = useState('')
-    const [phone, setPhone] = useState('')
-    const [addresses, setAddresses] = useState([''])
+const UserProfile = ({userInfo, sessionId, logoutFromAcc, setUserInfo}) => {
+    const [imageUri, setImageUri] = useState(userInfo?.avatar || null)
+
+    const [userName, setUserName] = useState(userInfo?.name || '')
+    const [phone, setPhone] = useState(userInfo?.phone || '')
+    const [addresses, setAddresses] = useState(userInfo?.addresses.length ?
+        userInfo.addresses :
+        [{
+            address: '',
+            alias: ''
+        }])
+    const [loading, setLoading] = useState(false)
 
     const phoneChangedHandler = (text, i) => {
         const addressesTmp = [...addresses]
-        addressesTmp[i] = text
+        addressesTmp[i].address = text
         setAddresses(addressesTmp)
     }
 
     const addNewAddress = () => {
-        const addressesTmp = [...addresses, '']
+        const addressesTmp = [...addresses, {address: '', alias: ''}]
         setAddresses(addressesTmp)
     }
 
@@ -57,31 +66,64 @@ const UserProfile = ({userInfo}) => {
         return {uri: localUri, name: filename, type}
     }
 
-    const onPickImage = (uri) => {
-        imageUri = uri
+    const signoutFromAcc = () => {
+        signout(sessionId)
+        logoutFromAcc()
     }
 
-    const patchUserInfo = () => {
+    const onPickImage = (uri) => {
+        setImageUri(uri)
+    }
+
+    const onDelete = () => {
+        setImageUri(null)
+    }
+
+    const patchUser = () => {
         if (!userName) Alert.alert('Внимание', 'Имя не может быть пустым!')
         else {
-            const requestData = new FormData()
+            const requestData = {
+                name: userName
+            }
 
-            requestData.append('name', userName)
-            if (imageUri) requestData.append('picture', imageUri)
-            if (phone) requestData.append('phone', phone)
+            requestData.avatar = imageUri ? getImageUriData().uri : ''
+            requestData.phone = phone
 
             const availableAddresses = []
-            addresses.forEach(address => {
-                if (address) availableAddresses.push({
-                    address,
-                    alias: address
+            if (addresses.length !== 1 || addresses[0].address) {
+                addresses.forEach(address => {
+                    if (address.address) availableAddresses.push({
+                        address: address.address,
+                        alias: address.address
+                    })
                 })
+            }
+
+            requestData.addresses = availableAddresses
+
+            const formData = new FormData()
+            formData.append('data', JSON.stringify(requestData))
+
+            setLoading(true)
+
+            patchUserInfo(formData, sessionId).then(response => {
+                if (response.ok) {
+                    getUserInfo(sessionId)
+                        .then(response => {
+                            return response.json()
+                        })
+                        .then(responseJson => {
+                            console.log(responseJson)
+                            setUserInfo(responseJson)
+                            Alert.alert('Успешно!', 'Данные профиля успешно обновлены')
+                        }).finally(() => {
+                        setLoading(false)
+                    })
+                } else {
+                    setLoading(false)
+                }
             })
 
-            if (availableAddresses.length)
-                requestData.append('addresses', JSON.stringify(availableAddresses))
-
-            console.log(requestData)
         }
     }
 
@@ -91,11 +133,13 @@ const UserProfile = ({userInfo}) => {
                 <Text style={styles.title}>Мой профиль</Text>
                 <View style={styles.logoutWrapper}>
                     <View style={styles.verticalDivider}/>
-                    <Text style={styles.logoutBtn}>Выйти</Text>
+                    <TouchableOpacity onPress={signoutFromAcc}>
+                        <Text style={styles.logoutBtn}>Выйти</Text>
+                    </TouchableOpacity>
                 </View>
             </View>
             <View style={styles.avatarWrapper}>
-                <ImagePicker onPick={onPickImage}/>
+                <ImagePicker onPick={onPickImage} onDelete={onDelete} imageUri={imageUri}/>
             </View>
             <ScrollView style={{flex: 1}}>
                 <View style={styles.userInfoSection}>
@@ -128,7 +172,7 @@ const UserProfile = ({userInfo}) => {
                     {addresses.map((address, i) =>
                         <View style={styles.inputWrapper} key={i}>
                             <MaterialIcons name="home" size={24} color="black"/>
-                            <TextInput style={styles.input} value={address}
+                            <TextInput style={styles.input} value={address.address}
                                        onChangeText={(text) => phoneChangedHandler(text, i)}
                                        placeholder="Адрес"/>
                             <TouchableOpacity onPress={() => removeAddressValue(i)}>
@@ -143,26 +187,39 @@ const UserProfile = ({userInfo}) => {
                     </TouchableOpacity>}
                 </View>
             </ScrollView>
-            <TouchableOpacity style={styles.saveBtn} onPress={patchUserInfo}>
+            <TouchableOpacity style={styles.saveBtn} onPress={patchUser}>
                 <Text style={styles.saveBtnText}>Сохранить</Text>
             </TouchableOpacity>
+            {loading && <Preloader/>}
         </View>
     )
 
-   /* return (
-        <View style={styles.container}>
-            <MapView style={styles.map} />
-        </View>
-    )*/
+    /* return (
+         <View style={styles.container}>
+             <MapView style={styles.map} />
+         </View>
+     )*/
 }
 
 const mapStateToProps = state => {
     return {
-        userInfo: state.auth.userInfo
+        userInfo: state.auth.userInfo,
+        sessionId: state.auth.sessionId
     }
 }
 
-export default connect(mapStateToProps)(UserProfile)
+const mapDispatchToProps = dispatch => {
+    return {
+        logoutFromAcc: () => {
+            dispatch(logout())
+        },
+        setUserInfo: userInfo => {
+            dispatch(setUserInfo(userInfo))
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(UserProfile)
 
 const styles = StyleSheet.create({
     wrapper: {

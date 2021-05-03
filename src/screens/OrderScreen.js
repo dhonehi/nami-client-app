@@ -8,12 +8,13 @@ import {
     TouchableOpacity,
     TouchableWithoutFeedback,
     AsyncStorage,
+    Modal,
     StyleSheet
 } from "react-native";
 import {headerHeight} from "../components/Header";
 import {RALEWAY_BOLD, RALEWAY_MEDIUM, RALEWAY_REGULAR} from "../fonts/fontsTypes";
 
-import {MaterialIcons, Ionicons} from '@expo/vector-icons';
+import {MaterialIcons, MaterialCommunityIcons, Ionicons} from '@expo/vector-icons';
 
 import {connect} from "react-redux";
 
@@ -21,8 +22,10 @@ import {clearUserCard} from "../store/actions/userCard";
 
 import {DeliveryIcon, ShoppingBagIcon, MoneyIcon} from "../icons/orderIcons";
 
+
 import {useNavigation} from '@react-navigation/native';
 import Preloader from "../router/components/Preloader";
+import RadioSelect from "../components/RadioSelect";
 
 const Check = ({onClick, isChecked, disabled}) => {
     return (
@@ -41,6 +44,7 @@ const OrderScreen = ({route: {params: {userCard}}, clearCard}) => {
     const [phoneNumber, setPhoneNumber] = useState('')
     const [additionalInformation, setAdditionalInformation] = useState('')
     const [loading, setLoading] = useState(false)
+    const [isShowAddressSelect, setIsShowAddressSelect] = useState(false)
 
     const deliveryClickHandler = () => {
         setIsDelivery(!isDelivery)
@@ -146,7 +150,7 @@ const OrderScreen = ({route: {params: {userCard}}, clearCard}) => {
                                 <Text style={{color: 'white'}}>3</Text>
                             </View>
                             <View style={styles.orderCardContent}>
-                                <Text style={styles.orderCardTitle}>Данные для доставки</Text>
+                                <Text style={styles.orderCardTitle}>Данные для заказа</Text>
                             </View>
                         </View>
                         <View style={styles.orderCard}>
@@ -156,13 +160,15 @@ const OrderScreen = ({route: {params: {userCard}}, clearCard}) => {
                                            placeholder="Ваше имя"/>
                             </View>
                         </View>
-                        <View style={styles.orderCard}>
+                        {isDelivery && <View style={styles.orderCard}>
                             <View style={styles.inputWrapper}>
                                 <MaterialIcons name="home" size={24} color="black"/>
                                 <TextInput style={styles.orderInput} value={address} onChangeText={setAddress}
-                                           placeholder="Адресс"/>
+                                           placeholder="Адрес"/>
+                                <MaterialCommunityIcons onPress={() => setIsShowAddressSelect(true)}
+                                                        name="dots-horizontal" size={24} color="black"/>
                             </View>
-                        </View>
+                        </View>}
                         <View style={styles.orderCard}>
                             <View style={styles.inputWrapper}>
                                 <Ionicons name="call" size={24} color="black"/>
@@ -185,6 +191,13 @@ const OrderScreen = ({route: {params: {userCard}}, clearCard}) => {
                 </ScrollView>
             </View>
             {loading && <Preloader/>}
+            <RadioSelect isVisible={isShowAddressSelect}
+                         onClose={() => setIsShowAddressSelect(false)}
+                         onSave={(selectedItem) => {
+                             setAddress(selectedItem.label)
+                             setIsShowAddressSelect(false)
+                         }}
+            />
         </View>
     )
 }
@@ -262,7 +275,7 @@ const styles = StyleSheet.create({
     },
     orderInput: {
         marginLeft: 14,
-        width: '100%',
+        flex: 1,
         height: '100%',
     },
     orderBtn: {

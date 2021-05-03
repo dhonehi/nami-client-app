@@ -7,6 +7,8 @@ import {RALEWAY_BOLD, RALEWAY_MEDIUM} from "../fonts/fontsTypes";
 import Preloader from "../router/components/Preloader";
 import {Ionicons} from "@expo/vector-icons";
 
+import {signup} from "../api/api";
+
 export const Register = ({navigation}) => {
     const [name, setName] = useState('')
     const [phone, setPhone] = useState('')
@@ -32,13 +34,8 @@ export const Register = ({navigation}) => {
         }
 
         setLoading(true)
-        fetch('https://namisushi.ru/api/signup', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json;charset=utf-8'
-            },
-            body: JSON.stringify({email, password, name, phone})
-        })
+
+        signup({email, password, name, phone})
             .then(response => {
                 if (response.ok) {
                     Alert.alert('Регистрация прошла успешно!')

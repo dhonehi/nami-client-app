@@ -33,7 +33,7 @@ const FavouriteCard = ({product, userCard, removeProductFromFavourites, addToCar
                             <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                                 <Text style={styles.productTitle}>{product.title}</Text>
                                 <TouchableOpacity onPress={() => removeProductFromFavourites(product)}
-                                                  style={{backgroundColor: '#F56C6C', padding: 6, borderRadius: 4}}>
+                                                  style={{backgroundColor: '#F56C6C', padding: 6, borderRadius: 4, height: 30}}>
                                     <Ionicons name="md-trash-outline" size={15} color="white"/>
                                 </TouchableOpacity>
                             </View>
@@ -121,6 +121,7 @@ const styles = StyleSheet.create({
     },
     productTitle: {
         fontSize: 20,
+        maxWidth: '90%',
         fontFamily: RALEWAY_BOLD,
         color: '#1B4965'
     },

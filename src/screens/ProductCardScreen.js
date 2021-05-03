@@ -162,6 +162,7 @@ const styles = StyleSheet.create({
     },
     productTitle: {
         fontSize: 20,
+        maxWidth: '90%',
         fontFamily: RALEWAY_BOLD,
         color: '#1B4965'
     },

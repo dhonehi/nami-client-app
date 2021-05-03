@@ -2,8 +2,8 @@ import React, {useState, useEffect} from 'react';
 import {Button, Image, View, Text, Platform, TouchableOpacity, StyleSheet} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 
-export default function ImagePickerExample({onPick}) {
-    const [image, setImage] = useState(null);
+export default function ImagePickerExample({onPick, onDelete, imageUri}) {
+    const [image, setImage] = useState(imageUri);
 
     useEffect(() => {
         (async () => {
@@ -30,8 +30,9 @@ export default function ImagePickerExample({onPick}) {
         }
     };
 
-    const removeImage = () => {
+    const deleteImage = () => {
         setImage(null)
+        onDelete()
     }
 
     return (
@@ -41,7 +42,7 @@ export default function ImagePickerExample({onPick}) {
                 {!image && <Image style={{width: 80, height: 80}} source={require('../../assets/user-avatar.png')}/>}
             </TouchableOpacity>
             {image &&
-            <TouchableOpacity onPress={removeImage}>
+            <TouchableOpacity onPress={deleteImage}>
                 <Text style={styles.text}>Удалить фотографию</Text>
             </TouchableOpacity>}
         </View>
