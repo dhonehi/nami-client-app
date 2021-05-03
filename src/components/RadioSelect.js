@@ -5,19 +5,8 @@ import RadioButtonRN from "radio-buttons-react-native";
 import {AntDesign} from '@expo/vector-icons';
 import {RALEWAY_BOLD} from "../fonts/fontsTypes";
 
-const RadioSelect = ({isVisible, onClose, onSave}) => {
+const RadioSelect = ({data, isVisible, onClose, onSave}) => {
     const [selectedItem, setSelectedItem] = useState(null)
-
-    const data = [
-        {
-            label: 'data 1',
-            accessibilityLabel: 'Your label'
-        },
-        {
-            label: 'data 2',
-            accessibilityLabel: 'Your label'
-        }
-    ];
 
     return (
         <Modal
@@ -25,7 +14,7 @@ const RadioSelect = ({isVisible, onClose, onSave}) => {
             transparent={true}
             visible={isVisible}
             onRequestClose={() => {
-                Alert.alert('Modal has been closed.');
+                onClose()
             }}>
             <View style={styles.modal}>
                 <View style={styles.modalInner}>

@@ -35,13 +35,13 @@ const Check = ({onClick, isChecked, disabled}) => {
     )
 }
 
-const OrderScreen = ({route: {params: {userCard}}, clearCard}) => {
+const OrderScreen = ({route: {params: {userCard}}, userInfo, clearCard}) => {
     const navigation = useNavigation()
 
     const [isDelivery, setIsDelivery] = useState(true)
-    const [name, setName] = useState('')
+    const [name, setName] = useState(userInfo?.name || '')
     const [address, setAddress] = useState('')
-    const [phoneNumber, setPhoneNumber] = useState('')
+    const [phoneNumber, setPhoneNumber] = useState(userInfo?.phone || '')
     const [additionalInformation, setAdditionalInformation] = useState('')
     const [loading, setLoading] = useState(false)
     const [isShowAddressSelect, setIsShowAddressSelect] = useState(false)
@@ -165,8 +165,9 @@ const OrderScreen = ({route: {params: {userCard}}, clearCard}) => {
                                 <MaterialIcons name="home" size={24} color="black"/>
                                 <TextInput style={styles.orderInput} value={address} onChangeText={setAddress}
                                            placeholder="Адрес"/>
+                                {userInfo?.addresses.length > 0 &&
                                 <MaterialCommunityIcons onPress={() => setIsShowAddressSelect(true)}
-                                                        name="dots-horizontal" size={24} color="black"/>
+                                                        name="dots-horizontal" size={24} color="black"/>}
                             </View>
                         </View>}
                         <View style={styles.orderCard}>
@@ -191,15 +192,25 @@ const OrderScreen = ({route: {params: {userCard}}, clearCard}) => {
                 </ScrollView>
             </View>
             {loading && <Preloader/>}
-            <RadioSelect isVisible={isShowAddressSelect}
+            {userInfo !== null && <RadioSelect isVisible={isShowAddressSelect}
                          onClose={() => setIsShowAddressSelect(false)}
+                         data={userInfo.addresses.map(address => ({
+                             label: address.address,
+                             accessibilityLabel: address.alias
+                         }))}
                          onSave={(selectedItem) => {
-                             setAddress(selectedItem.label)
+                             setAddress(selectedItem?.label || '')
                              setIsShowAddressSelect(false)
                          }}
-            />
+            />}
         </View>
     )
+}
+
+const mapStateToProps = state => {
+    return {
+        userInfo: state.auth.userInfo,
+    }
 }
 
 const mapDispatchToProps = dispatch => {
@@ -210,7 +221,7 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
-export default connect(null, mapDispatchToProps)(OrderScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(OrderScreen)
 
 const styles = StyleSheet.create({
     container: {
