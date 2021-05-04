@@ -17,6 +17,7 @@ import ProfileScreen from "../screens/ProfileScreen";
 import OrderScreen from "../screens/OrderScreen";
 import OrdersScreen from "../screens/OrdersScreen";
 import FavouritesScreen from "../screens/FavouritesScreen";
+import MapScreen from "../screens/MapScreen";
 
 import MyTabBar from "./components/MyTabBar";
 import DrawerContent from "./components/DrawerContent";
@@ -115,6 +116,9 @@ const OrdersStackNavigator = ({navigation}) => (
             headerTitle: '',
             headerStatusBarHeight: 50,
             headerTransparent: true
+        }}/>
+        <OrdersStack.Screen name="MapScreen" component={MapScreen} options={{
+            header: () => null
         }}/>
     </OrdersStack.Navigator>
 )

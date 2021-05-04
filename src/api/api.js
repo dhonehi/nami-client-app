@@ -49,3 +49,23 @@ export const signin = (loginData) => {
         body: JSON.stringify(loginData)
     })
 }
+
+export const getUserOrders = (sessionId) => {
+    return fetch(BASE_URL + 'orders', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+            'Cookie': `${sessionId}`
+        }
+    })
+}
+
+export const getOrderProducts = (orderId, sessionId) => {
+    return fetch(BASE_URL + 'order/' + orderId, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+            'Cookie': `${sessionId}`
+        }
+    })
+}
