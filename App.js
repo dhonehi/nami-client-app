@@ -4,11 +4,11 @@ import {useFonts} from 'expo-font';
 
 import {Provider} from "react-redux";
 
+window.navigator.userAgent = 'react-native'
+
 import {Routes} from "./src/router/Routes"
 
 import configureStore from "./src/store/store";
-
-import {io} from "socket.io-client";
 
 const store = configureStore()
 

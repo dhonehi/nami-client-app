@@ -113,7 +113,6 @@ const UserProfile = ({userInfo, sessionId, logoutFromAcc, setUserInfo}) => {
                             return response.json()
                         })
                         .then(responseJson => {
-                            console.log(responseJson)
                             setUserInfo(responseJson)
                             Alert.alert('Успешно!', 'Данные профиля успешно обновлены')
                         }).finally(() => {
@@ -151,7 +150,7 @@ const UserProfile = ({userInfo, sessionId, logoutFromAcc, setUserInfo}) => {
                     </View>
                     <View style={styles.inputWrapper}>
                         <View style={{width: 25}}/>
-                        <TextInput style={styles.input} editable={false} value="superadmin@gmail.com"
+                        <TextInput style={styles.input} editable={false} value={userInfo.email}
                                    placeholder="Email"/>
                         <MaterialIcons name="lock" size={15} color="#8A8A8A"/>
                     </View>
@@ -193,12 +192,6 @@ const UserProfile = ({userInfo, sessionId, logoutFromAcc, setUserInfo}) => {
             {loading && <Preloader/>}
         </View>
     )
-
-    /* return (
-         <View style={styles.container}>
-             <MapView style={styles.map} />
-         </View>
-     )*/
 }
 
 const mapStateToProps = state => {

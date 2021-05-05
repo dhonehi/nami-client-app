@@ -1,3 +1,5 @@
+import io from 'socket.io-client/dist/socket.io'
+
 const BASE_URL = 'https://namisushi.ru/api/'
 
 export const patchUserInfo = (userInfo, sessionId) => {
@@ -68,4 +70,14 @@ export const getOrderProducts = (orderId, sessionId) => {
             'Cookie': `${sessionId}`
         }
     })
+}
+
+export const connectToWs = (sessionId) => {
+    return io('https://namisushi.ru/', {
+        jsonp: false,
+        path: '/ws',
+        extraHeaders: {
+            'Cookie': `${sessionId}`
+        }
+    });
 }

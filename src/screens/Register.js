@@ -88,7 +88,7 @@ export const Register = ({navigation}) => {
                         <Text style={styles.btnText}>Регистрация</Text>
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.push('Login')}>
                     <Text style={styles.hasAcc}>Уже есть аккаунт?</Text>
                 </TouchableOpacity>
             </View>

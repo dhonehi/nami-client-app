@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import {Text, View, StyleSheet, Image, ScrollView, ToastAndroid, TouchableOpacity} from "react-native";
 
 import {connect} from "react-redux";
@@ -71,7 +71,7 @@ const FavouritesScreen = ({favourites, userCard, removeProductFromFavourites, ad
 const mapStateToProps = state => {
     return {
         favourites: state.favourites.favourites,
-        userCard: state.userCard.userCard
+        userCard: state.userCard.userCard,
     }
 }
 

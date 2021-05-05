@@ -1,31 +1,62 @@
-import React, {useEffect} from "react";
-import MapView from 'react-native-maps';
-import { StyleSheet, View, Dimensions } from 'react-native';
-import {io} from "socket.io-client";
+import React, {useEffect, useState} from "react";
+import MapView, {Marker} from 'react-native-maps';
+import {StyleSheet, View, Dimensions} from 'react-native';
 
-export default function MapScreen() {
+import {connectToWs} from "../api/api";
+
+export default function MapScreen({route: {params: {sessionId}}}) {
+    const initialCoordinates = {
+        latitude: 48.005414092030264,
+        longitude: 37.79913205201336,
+        latitudeDelta: 0.0043,
+        longitudeDelta: 0.0034
+    }
+
+    const [region, setRegion] = useState(initialCoordinates)
+    const [courierCoordinates, setCourierCoordinates] = useState({
+        latitude: initialCoordinates.latitude,
+        longitude: initialCoordinates.longitude
+    })
+
+
+    const getCourierCoordinatesHandler = (coordinates) => {
+        const newCoordinates = {
+            latitude: coordinates[0],
+            longitude: coordinates[1]
+        }
+
+        setCourierCoordinates(newCoordinates)
+        setRegion({
+            ...newCoordinates,
+            latitudeDelta: initialCoordinates.latitudeDelta,
+            longitudeDelta: initialCoordinates.longitudeDelta
+        })
+    }
+
     useEffect(() => {
-        const socket = io.connect('https://namisushi.ru', {path: '/ws'})
-        console.log(socket)
+        let intervalId
 
-        socket.on('connection', msg => console.log('connection', msg))
+        let socket = connectToWs(sessionId)
+
+        socket.on('connection', () => console.log('connection'))
+        socket.on('coordinates', (coordinate) => getCourierCoordinatesHandler(coordinate))
         socket.on('errors', msg => console.log('errors', msg))
         socket.on('disconnect', msg => console.log('disconnect', msg))
-    }, [])
 
-    const initialCoord = {
-        latitude: 48.005414092030264,
-        longitude: 37.79913205201336
-    }
+        intervalId = setInterval(() => socket.emit('coordinates'), 10000)
+
+        return () => {
+            clearInterval(intervalId)
+            socket.disconnect()
+            socket = null
+        }
+    }, [])
 
     return (
         <View style={styles.container}>
-            <MapView style={styles.map} initialRegion={{
-                latitude: initialCoord.latitude,
-                longitude: initialCoord.longitude,
-                latitudeDelta: 0.0043,
-                longitudeDelta: 0.0034
-            }} />
+            <MapView style={styles.map} initialRegion={initialCoordinates} region={region}>
+                <Marker coordinate={{latitude: courierCoordinates.latitude, longitude: courierCoordinates.longitude}} />
+            </MapView>
         </View>
     )
 }

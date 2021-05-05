@@ -1,13 +1,14 @@
 import React, {useEffect, useState} from "react";
-import {View, Text, StyleSheet, ScrollView, Image, TouchableOpacity} from "react-native";
+import {View, Text, StyleSheet, ScrollView, Image, ToastAndroid, TouchableOpacity} from "react-native";
 import {RALEWAY_BOLD, RALEWAY_REGULAR} from "../fonts/fontsTypes";
 import {CommonActions} from "@react-navigation/native";
 
 import {connect} from "react-redux";
 
 import {getUserOrders, getOrderProducts} from "../api/api";
+import {addProductsToUserCard,} from "../store/actions/userCard";
 
-const OrderCard = ({order, sessionId, navigation}) => {
+const OrderCard = ({order, sessionId, navigation, addProductsToCard}) => {
     const [orderInfo, setOrderInfo] = useState(null)
 
     useEffect(() => {
@@ -20,20 +21,25 @@ const OrderCard = ({order, sessionId, navigation}) => {
 
     const getConditionText = () => {
         if (orderInfo.condition === 0) return 'Ожидает подтверждения'
-        else if(orderInfo.condition === 10) return 'В процессе'
-        else if(orderInfo.condition === 20) return 'Еда в пути'
-        else if(orderInfo.condition === 30) return 'Готов'
-        else if(orderInfo.condition === 40) return 'Отмененный заказ'
+        else if (orderInfo.condition === 10) return 'В процессе'
+        else if (orderInfo.condition === 20) return 'Еда в пути'
+        else if (orderInfo.condition === 30) return 'Готов'
+        else if (orderInfo.condition === 40) return 'Отмененный заказ'
     }
 
     const getConditionColor = () => {
-        if(orderInfo.condition >= 0 && orderInfo.condition <= 20) return '#FFA133'
-        else if(orderInfo.condition === 30) return '#27AE60'
-        else if(orderInfo.condition === 40) return '#FF3333'
+        if (orderInfo.condition >= 0 && orderInfo.condition <= 20) return '#FFA133'
+        else if (orderInfo.condition === 30) return '#27AE60'
+        else if (orderInfo.condition === 40) return '#FF3333'
     }
 
     const getDateString = (date) => {
         return new Date(date).toLocaleDateString()
+    }
+
+    const addOrderToCard = () => {
+        addProductsToCard(orderInfo.products)
+        ToastAndroid.show('Заказ в корзине', ToastAndroid.SHORT)
     }
 
     if (orderInfo) {
@@ -52,19 +58,28 @@ const OrderCard = ({order, sessionId, navigation}) => {
                         </View>
                         <View style={styles.orderInfoStatus}>
                             <View style={[styles.circle, {backgroundColor: getConditionColor()}]}/>
-                            <Text style={[styles.orderInfoStatusText, {color: getConditionColor()}]}>{getConditionText()}</Text>
+                            <Text
+                                style={[styles.orderInfoStatusText, {color: getConditionColor()}]}>{getConditionText()}</Text>
                         </View>
                     </View>
                 </View>
+                {orderInfo.condition <= 20 &&
                 <View style={styles.bottom}>
-                    <TouchableOpacity onPress={() => navigation.push('MapScreen')}
-                        style={styles.findBtn}>
+                    <TouchableOpacity onPress={() => navigation.push('MapScreen', {sessionId})}
+                                      style={styles.findBtn}>
                         <Text style={styles.findBtnText}>Отследить</Text>
                     </TouchableOpacity>
-                    {(orderInfo.condition === 0 || orderInfo.condition === 10) && <TouchableOpacity style={styles.clearBtn}>
+                    {(orderInfo.condition === 0 || orderInfo.condition === 10) &&
+                    <TouchableOpacity style={styles.clearBtn}>
                         <Text style={styles.clearBtnText}>Отменить</Text>
                     </TouchableOpacity>}
                 </View>
+                }
+                {orderInfo.condition > 20 &&
+                <TouchableOpacity onPress={addOrderToCard} style={styles.findBtn}>
+                    <Text style={styles.findBtnText}>Повторить</Text>
+                </TouchableOpacity>}
+
             </View>
         )
     } else {
@@ -72,7 +87,7 @@ const OrderCard = ({order, sessionId, navigation}) => {
     }
 }
 
-const OrdersScreen = ({navigation, isLoggedIn, userInfo, sessionId}) => {
+const OrdersScreen = ({navigation, isLoggedIn, userInfo, sessionId, addProductsToCard}) => {
     const [userOrders, setUserOrders] = useState([])
 
     useEffect(() => {
@@ -98,7 +113,9 @@ const OrdersScreen = ({navigation, isLoggedIn, userInfo, sessionId}) => {
         <View style={styles.container}>
             <Text style={styles.title}>История заказов</Text>
             <ScrollView style={{flex: 1}}>
-                {userOrders.map(order => <OrderCard order={order} sessionId={sessionId} navigation={navigation} key={order._id}/>)}
+                {userOrders.map(order => <OrderCard order={order} sessionId={sessionId}
+                                                    navigation={navigation} key={order._id}
+                                                    addProductsToCard={addProductsToCard}/>)}
             </ScrollView>
         </View>
     )
@@ -112,7 +129,15 @@ const mapStateToProps = state => {
     }
 }
 
-export default connect(mapStateToProps)(OrdersScreen)
+const mapDispatchToProps = dispatch => {
+    return {
+        addProductsToCard: (products) => {
+            dispatch(addProductsToUserCard(products))
+        },
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(OrdersScreen)
 
 const styles = StyleSheet.create({
     container: {
@@ -144,7 +169,7 @@ const styles = StyleSheet.create({
         height: 100
     },
     orderInfo: {
-       flex: 1
+        flex: 1
     },
     orderInfoHeader: {
         marginTop: 15,

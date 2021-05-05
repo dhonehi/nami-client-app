@@ -1,4 +1,4 @@
-import {ADD_TO_USER_CARD, CLEAR_USER_CARD, REMOVE_ALL_PRODUCT, REMOVE_FROM_USER_CARD} from "../actions/types";
+import {ADD_TO_USER_CARD, ADD_PRODUCTS_TO_USER_CARD, CLEAR_USER_CARD, REMOVE_ALL_PRODUCT, REMOVE_FROM_USER_CARD} from "../actions/types";
 
 const initialState = {
     userCard: []
@@ -17,6 +17,16 @@ const userCardReducer = (state = initialState, action) => {
                 return {
                     userCard: [...state.userCard, {...action.payload, count: 1}]
                 }
+            }
+        }
+        case ADD_PRODUCTS_TO_USER_CARD: {
+            return {
+                userCard: action.payload.map(product => {
+                    return {
+                        ...product.product,
+                        count: product.count
+                    }
+                })
             }
         }
         case REMOVE_FROM_USER_CARD:
