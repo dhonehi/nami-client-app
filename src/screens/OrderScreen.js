@@ -16,11 +16,15 @@ import {RALEWAY_BOLD, RALEWAY_MEDIUM, RALEWAY_REGULAR} from "../fonts/fontsTypes
 
 import {MaterialIcons, MaterialCommunityIcons, Ionicons} from '@expo/vector-icons';
 
+import DateTimePicker from '@react-native-community/datetimepicker';
+
 import {connect} from "react-redux";
 
 import {clearUserCard} from "../store/actions/userCard";
 
 import {DeliveryIcon, ShoppingBagIcon, MoneyIcon} from "../icons/orderIcons";
+
+import {sendOrder} from "../api/api";
 
 
 import {useNavigation} from '@react-navigation/native';
@@ -35,7 +39,7 @@ const Check = ({onClick, isChecked, disabled}) => {
     )
 }
 
-const OrderScreen = ({route: {params: {userCard}}, userInfo, clearCard}) => {
+const OrderScreen = ({route: {params: {userCard}}, userInfo, sessionId, clearCard}) => {
     const navigation = useNavigation()
 
     const [isDelivery, setIsDelivery] = useState(true)
@@ -43,6 +47,9 @@ const OrderScreen = ({route: {params: {userCard}}, userInfo, clearCard}) => {
     const [address, setAddress] = useState('')
     const [phoneNumber, setPhoneNumber] = useState(userInfo?.phone || '')
     const [additionalInformation, setAdditionalInformation] = useState('')
+    const [deliveryTime, setDeliveryTime] = useState(Date.now())
+    const [isShowDatePicker, setIsShowDatePicker] = useState(false)
+    const [isShowTimePicker, setIsShowTimePicker] = useState(false)
     const [loading, setLoading] = useState(false)
     const [isShowAddressSelect, setIsShowAddressSelect] = useState(false)
 
@@ -69,24 +76,19 @@ const OrderScreen = ({route: {params: {userCard}}, userInfo, clearCard}) => {
             phone: phoneNumber,
             username: name,
             additionalInformation,
-            delivery: isDelivery
+            delivery: isDelivery,
+            deliveryTime
         }
 
         setLoading(true)
 
-        fetch('https://namisushi.ru/api/order', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json;charset=utf-8'
-            },
-            body: JSON.stringify(requestData)
-        }).then(async response => {
+        sendOrder(requestData, sessionId).then(async response => {
             if (response.ok) {
                 const order = {
                     date: Date.now(),
                     address,
                     additionalInformation,
-                    products: userCard
+                    products: userCard,
                 }
 
                 const prevOrders = JSON.parse(await AsyncStorage.getItem('orders'))
@@ -104,6 +106,27 @@ const OrderScreen = ({route: {params: {userCard}}, userInfo, clearCard}) => {
                 navigation.popToTop()
             }
         })
+    }
+
+    const showDatePicker = () => {
+        setIsShowDatePicker(true)
+    }
+
+    const changeDateHandler = (data) => {
+        setIsShowDatePicker(false)
+        if (data.type === 'set') {
+            setDeliveryTime(data.nativeEvent.timestamp)
+            setIsShowTimePicker(true)
+        }
+    }
+
+    const changeTimeHandler = (data) => {
+        setIsShowTimePicker(false)
+        if (data.type === 'set') {
+            setDeliveryTime(data.nativeEvent.timestamp)
+        } else {
+            setDeliveryTime(new Date(Date.now()))
+        }
     }
 
     return (
@@ -179,6 +202,14 @@ const OrderScreen = ({route: {params: {userCard}}, userInfo, clearCard}) => {
                         </View>
                         <View style={styles.orderCard}>
                             <View style={styles.inputWrapper}>
+                                <Ionicons name="time" size={24} color="black"/>
+                                <TouchableOpacity style={styles.timeInputWrapper} onPress={showDatePicker}>
+                                    <Text>{new Date(deliveryTime).toLocaleDateString()} {new Date(deliveryTime).toLocaleTimeString()}</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        <View style={styles.orderCard}>
+                            <View style={styles.inputWrapper}>
                                 <View style={{width: 25}}/>
                                 <TextInput style={styles.orderInput} value={additionalInformation}
                                            onChangeText={setAdditionalInformation}
@@ -193,15 +224,33 @@ const OrderScreen = ({route: {params: {userCard}}, userInfo, clearCard}) => {
             </View>
             {loading && <Preloader/>}
             {userInfo !== null && <RadioSelect isVisible={isShowAddressSelect}
-                         onClose={() => setIsShowAddressSelect(false)}
-                         data={userInfo.addresses.map(address => ({
-                             label: address.address,
-                             accessibilityLabel: address.alias
-                         }))}
-                         onSave={(selectedItem) => {
-                             setAddress(selectedItem?.label || '')
-                             setIsShowAddressSelect(false)
-                         }}
+                                               onClose={() => setIsShowAddressSelect(false)}
+                                               data={userInfo.addresses.map(address => ({
+                                                   label: address.address,
+                                                   accessibilityLabel: address.alias
+                                               }))}
+                                               onSave={(selectedItem) => {
+                                                   setAddress(selectedItem?.label || '')
+                                                   setIsShowAddressSelect(false)
+                                               }}
+            />}
+            {isShowDatePicker &&
+            <DateTimePicker
+                testID="dateTimePicker"
+                value={deliveryTime}
+                mode="date"
+                is24Hour={true}
+                display="default"
+                onChange={changeDateHandler}
+            />}
+            {isShowTimePicker &&
+            <DateTimePicker
+                testID="dateTimePicker"
+                value={deliveryTime}
+                mode="time"
+                is24Hour={true}
+                display="default"
+                onChange={changeTimeHandler}
             />}
         </View>
     )
@@ -210,6 +259,7 @@ const OrderScreen = ({route: {params: {userCard}}, userInfo, clearCard}) => {
 const mapStateToProps = state => {
     return {
         userInfo: state.auth.userInfo,
+        sessionId: state.auth.sessionId
     }
 }
 
@@ -301,4 +351,8 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontFamily: RALEWAY_BOLD
     },
+    timeInputWrapper: {
+        marginLeft: 14,
+        flex: 1
+    }
 })

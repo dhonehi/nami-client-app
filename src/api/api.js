@@ -72,6 +72,17 @@ export const getOrderProducts = (orderId, sessionId) => {
     })
 }
 
+export const sendOrder = (order, sessionId) => {
+    return fetch(BASE_URL + 'order', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8',
+            'Cookie': `${sessionId}`
+        },
+        body: JSON.stringify(order)
+    })
+}
+
 export const connectToWs = (sessionId) => {
     return io('https://namisushi.ru/', {
         jsonp: false,

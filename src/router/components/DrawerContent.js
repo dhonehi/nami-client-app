@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
     },
     drawerHeader: {
         marginTop: 30,
-        marginBottom: 60,
+        marginBottom: 90,
         flexDirection: 'row',
         alignItems: 'center'
     },
