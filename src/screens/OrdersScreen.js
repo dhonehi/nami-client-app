@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from "react";
-import {View, Text, StyleSheet, ScrollView, Image, ToastAndroid, TouchableOpacity} from "react-native";
+import React, {useEffect, useState, useCallback} from "react";
+import {View, Text, StyleSheet, ScrollView, Image, ToastAndroid, RefreshControl, TouchableOpacity} from "react-native";
 import {RALEWAY_BOLD, RALEWAY_REGULAR} from "../fonts/fontsTypes";
 import {CommonActions} from "@react-navigation/native";
 
 import {connect} from "react-redux";
 
-import {getUserOrders, getOrderProducts} from "../api/api";
+import {getUserOrders, getOrderProducts, cancelOrder} from "../api/api";
 import {addProductsToUserCard,} from "../store/actions/userCard";
 
 const OrderCard = ({order, sessionId, navigation, addProductsToCard}) => {
@@ -42,6 +42,12 @@ const OrderCard = ({order, sessionId, navigation, addProductsToCard}) => {
         ToastAndroid.show('Заказ в корзине', ToastAndroid.SHORT)
     }
 
+    const rejectOrder = () => {
+        cancelOrder(orderInfo._id).then(() => {
+            setOrderInfo({...orderInfo, condition: 40})
+        })
+    }
+
     if (orderInfo) {
         return (
             <View style={styles.orderCard}>
@@ -65,12 +71,13 @@ const OrderCard = ({order, sessionId, navigation, addProductsToCard}) => {
                 </View>
                 {orderInfo.condition <= 20 &&
                 <View style={styles.bottom}>
+                    {orderInfo.condition === 20 &&
                     <TouchableOpacity onPress={() => navigation.push('MapScreen', {sessionId})}
                                       style={styles.findBtn}>
                         <Text style={styles.findBtnText}>Отследить</Text>
-                    </TouchableOpacity>
-                    {(orderInfo.condition === 0 || orderInfo.condition === 10) &&
-                    <TouchableOpacity style={styles.clearBtn}>
+                    </TouchableOpacity>}
+                    {orderInfo.condition === 0 &&
+                    <TouchableOpacity style={styles.clearBtn} onPress={rejectOrder}>
                         <Text style={styles.clearBtnText}>Отменить</Text>
                     </TouchableOpacity>}
                 </View>
@@ -89,6 +96,21 @@ const OrderCard = ({order, sessionId, navigation, addProductsToCard}) => {
 
 const OrdersScreen = ({navigation, isLoggedIn, userInfo, sessionId, addProductsToCard}) => {
     const [userOrders, setUserOrders] = useState([])
+    const [refreshing, setRefreshing] = useState(false)
+
+    const loadOrders = () => {
+        setRefreshing(true)
+
+        getUserOrders(sessionId)
+            .then(response => response.json())
+            .then(responseJson => {
+                setUserOrders([])
+                setUserOrders(responseJson.orders)
+            })
+            .finally(() => {
+                setRefreshing(false)
+            })
+    }
 
     useEffect(() => {
         if (!isLoggedIn) {
@@ -101,18 +123,20 @@ const OrdersScreen = ({navigation, isLoggedIn, userInfo, sessionId, addProductsT
                 })
             )
         } else {
-            getUserOrders(sessionId)
-                .then(response => response.json())
-                .then(responseJson => {
-                    setUserOrders(responseJson.orders)
-                })
+            loadOrders()
         }
     }, [])
+
+    const onRefresh = useCallback(() => {
+        loadOrders()
+    }, []);
 
     return (
         <View style={styles.container}>
             <Text style={styles.title}>История заказов</Text>
-            <ScrollView style={{flex: 1}}>
+            <ScrollView style={{flex: 1}}
+                        refreshControl={<RefreshControl refreshing={refreshing}
+                                                        onRefresh={onRefresh}/>}>
                 {userOrders.map(order => <OrderCard order={order} sessionId={sessionId}
                                                     navigation={navigation} key={order._id}
                                                     addProductsToCard={addProductsToCard}/>)}

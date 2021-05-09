@@ -58,7 +58,7 @@ const OrderScreen = ({route: {params: {userCard}}, userInfo, sessionId, clearCar
     }
 
     const createOrder = () => {
-        if (!name || !address || !phoneNumber) {
+        if (!name || (!address && isDelivery) || !phoneNumber) {
             Alert.alert('Не все поля заполнены!')
             return
         }
@@ -77,7 +77,7 @@ const OrderScreen = ({route: {params: {userCard}}, userInfo, sessionId, clearCar
             username: name,
             additionalInformation,
             delivery: isDelivery,
-            deliveryTime
+            time: new Date(deliveryTime).toUTCString()
         }
 
         setLoading(true)

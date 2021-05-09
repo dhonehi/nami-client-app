@@ -8,7 +8,6 @@ let initialState = {
 
 AsyncStorage.getItem('favourites').then(response => {
     if (response && response === 'true') initialState.favourites = response.json
-    console.log(initialState)
 })
 
 const saveFavouritesToStorage = (favourites) => {

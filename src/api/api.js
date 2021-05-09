@@ -83,6 +83,15 @@ export const sendOrder = (order, sessionId) => {
     })
 }
 
+export const cancelOrder = (orderId, sessionId) => {
+    return fetch(BASE_URL + `order/${orderId}/cancel`, {
+        method: 'PATCH',
+        headers: {
+            'Cookie': `${sessionId}`
+        }
+    })
+}
+
 export const connectToWs = (sessionId) => {
     return io('https://namisushi.ru/', {
         jsonp: false,

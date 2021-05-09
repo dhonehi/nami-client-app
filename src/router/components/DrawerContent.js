@@ -1,16 +1,31 @@
-import {View, Text, Image, TouchableOpacity, StyleSheet} from "react-native";
+import {View, Text, Image, TouchableOpacity, Linking, Button, Alert, StyleSheet} from "react-native";
 
 import {AntDesign, Entypo} from '@expo/vector-icons';
 
-import React, {useEffect} from "react";
+import React, {useCallback, useEffect} from "react";
 import {
     DrawerContentScrollView,
 } from '@react-navigation/drawer';
 import {RALEWAY_MEDIUM} from "../../fonts/fontsTypes";
 
 import {connect} from "react-redux";
+
 import {logout} from "../../store/actions/auth";
 import {signout} from "../../api/api";
+
+const OpenURLButton = ({ url, children }) => {
+    const handlePress = useCallback(async () => {
+        const supported = await Linking.canOpenURL(url);
+
+        if (supported) {
+            await Linking.openURL(url);
+        } else {
+            Alert.alert(`Don't know how to open this URL: ${url}`);
+        }
+    }, [url]);
+
+    return <TouchableOpacity onPress={handlePress}><Text>{children}</Text></TouchableOpacity>;
+};
 
 function CustomDrawerContent(props) {
     const logoutFromAcc = () => {
@@ -38,11 +53,15 @@ function CustomDrawerContent(props) {
                 <View style={styles.drawerSection}>
                     <View style={styles.drawerItem}>
                         <AntDesign style={styles.icon} name="earth" size={20} color="rgba(255, 255, 255, 0.6)"/>
-                        <Text style={styles.drawerText}>Сайт</Text>
+                        <OpenURLButton url="https://namisushi.ru/">
+                            <Text style={styles.drawerText}>Сайт</Text>
+                        </OpenURLButton>
                     </View>
                     <View style={styles.drawerItem}>
                         <Entypo style={styles.icon} name="vk" size={20} color="rgba(255, 255, 255, 0.6)"/>
-                        <Text style={styles.drawerText}>vk.com</Text>
+                        <OpenURLButton url="https://vk.com/namisushidn">
+                            <Text style={styles.drawerText}>vk.com</Text>
+                        </OpenURLButton>
                     </View>
                     <View style={styles.drawerItem}>
                         <AntDesign style={styles.icon} name="instagram" size={20} color="rgba(255, 255, 255, 0.6)"/>
