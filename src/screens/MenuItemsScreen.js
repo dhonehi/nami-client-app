@@ -3,6 +3,8 @@ import {View, Text, Image, StyleSheet, ActivityIndicator, FlatList, TouchableOpa
 
 import {BoxShadow} from "react-native-shadow";
 
+import {connect} from "react-redux";
+
 import {headerHeight} from "../components/Header";
 
 import {RALEWAY_REGULAR, RALEWAY_BOLD} from "../fonts/fontsTypes";
@@ -52,8 +54,18 @@ const ProductCard = ({product, index, navigation}) => {
 }
 
 
-export const MenuItemsScreen = ({route: {params: {_id}}, navigation}) => {
+const MenuItemsScreen = ({route: {params: {_id, title}}, navigation, searchText}) => {
     const [products, setProducts] = useState({loading: true})
+    const [productsOriginal, setProductsOriginal] = useState([])
+
+    const searchProducts = () => {
+        const foundProducts = productsOriginal.filter(product => product.title.toLowerCase().includes(searchText.toLowerCase()))
+        setProducts({
+            loading: false,
+            productsList: foundProducts,
+            count: foundProducts.length
+        })
+    }
 
     useEffect(() => {
         const url = `https://namisushi.ru/api/products?category=${_id}`
@@ -65,8 +77,15 @@ export const MenuItemsScreen = ({route: {params: {_id}}, navigation}) => {
                     productsList: responseJson.products,
                     count: responseJson.total
                 })
+                setProductsOriginal(responseJson.products)
             })
     }, [])
+
+    useEffect(() => {
+        if (productsOriginal.length) {
+            searchProducts()
+        }
+    }, [searchText])
 
     if (products.loading) {
         return (
@@ -80,7 +99,7 @@ export const MenuItemsScreen = ({route: {params: {_id}}, navigation}) => {
         <View style={{flex: 1, marginTop: headerHeight}}>
             <FlatList
                 ListHeaderComponent={<View style={styles.headerContainer}>
-                    <Text style={styles.title}>Роллы</Text>
+                    <Text style={styles.title}>{title}</Text>
                     <Text style={styles.subtitle}>Найдено {products.count} товаров</Text>
                 </View>}
                 numColumns={2}
@@ -92,6 +111,14 @@ export const MenuItemsScreen = ({route: {params: {_id}}, navigation}) => {
         </View>
     )
 }
+
+const mapStateToProps = state => {
+    return {
+        searchText: state.search.search
+    }
+}
+
+export default connect(mapStateToProps)(MenuItemsScreen)
 
 const styles = StyleSheet.create({
     headerContainer: {

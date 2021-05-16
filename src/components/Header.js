@@ -1,25 +1,36 @@
-import React, {useEffect, useState} from 'react'
-
-import {TouchableOpacity, View, Text, TextInput, StyleSheet} from "react-native";
-
-import {Feather, SimpleLineIcons, FontAwesome} from "@expo/vector-icons";
+import React, {useState} from "react";
+import {View, Text, StyleSheet, TouchableOpacity, TextInput, TouchableWithoutFeedback} from "react-native";
 import HamburgerSvg from "../icons/HamburgerSvg";
 
 import {connect} from "react-redux";
 
+import {Feather, FontAwesome, SimpleLineIcons, AntDesign} from "@expo/vector-icons";
+import {clearUserCard} from "../store/actions/userCard";
+import {search} from "../store/actions/search";
+
 const HamburgerButton = ({navigation}) => (
-    <TouchableOpacity style={[styles.btnWrapper, {marginLeft: 20}]} onPress={() => navigation.openDrawer()}>
+    <TouchableOpacity style={styles.btnWrapper} onPress={() => navigation.openDrawer()}>
         <HamburgerSvg/>
     </TouchableOpacity>
 )
 
-const SearchBtn = ({onClick}) => (
-    <TouchableOpacity style={[styles.btnWrapper]} onPress={onClick}>
-        <Feather name="search" size={30} color="black"/>
+const BackBtn = ({navigation}) => (
+    <TouchableOpacity
+        onPress={() => navigation.goBack()}
+        style={styles.btnWrapper}>
+        <FontAwesome name="long-arrow-left" size={24} color="black"/>
     </TouchableOpacity>
 )
 
-const CartBtn = ({userCard, navigation, backToFav}) => (
+const SearchBtn = ({onClick}) => {
+    return (
+        <TouchableOpacity style={[styles.btnWrapper]} onPress={onClick}>
+            <Feather name="search" size={30} color="black"/>
+        </TouchableOpacity>
+    )
+}
+
+const CartBtn = ({userCard, navigation}) => (
     <TouchableOpacity
         onPress={() => navigation.navigate('ProductCard')}
         style={[styles.btnWrapper, styles.cartBtn]}>
@@ -28,39 +39,61 @@ const CartBtn = ({userCard, navigation, backToFav}) => (
     </TouchableOpacity>
 )
 
-const SearchBar = () => {
+const BtnGroup = ({navigation, userCard, isShowSearch, clickOnSearchBtn}) => {
     return (
-        <View style={{flexDirection: 'row', width: '100%', flex: 1, justifyContent: 'flex-start'}}>
-            <TextInput value="asd" />
+        <View style={styles.btnGroup}>
+            {isShowSearch && <SearchBtn onClick={clickOnSearchBtn}/>}
+            <CartBtn userCard={userCard} navigation={navigation}/>
         </View>
     )
 }
 
-const HeaderBtnGroup = (props) => {
-    const [isShowSearchBar, setIsShowSearchBar] = useState(false)
+const SearchBar = ({onClose, searchProducts}) => {
+    const [searchText, setSearchText] = useState('')
 
-    const showSearchBar = () => {
-        setIsShowSearchBar(true)
-        props.onClick()
+    const searchHandler = (text) => {
+        setSearchText(text)
+        searchProducts(text)
     }
 
-    if (isShowSearchBar) return (<SearchBar />)
-    else
-        return (
-            <View style={styles.btnGroup}>
-                {props.isShowSearch && <SearchBtn onClick={showSearchBar}/>}
-                <CartBtn userCard={props.userCard} navigation={props.navigation}/>
+    const closeHandler = () => {
+        setSearchText('')
+        onClose()
+    }
+
+    return (
+        <View style={styles.searchBar}>
+            <View style={styles.iconWrapper}>
+                <Feather name="search" size={30} color="white"/>
             </View>
-        )
+            <TextInput style={styles.searchInput} placeholder="Поиск" value={searchText} onChangeText={searchHandler}/>
+            <TouchableWithoutFeedback onPress={closeHandler}>
+                <AntDesign name="close" size={20} color="black" />
+            </TouchableWithoutFeedback>
+        </View>
+    )
 }
 
-const BackBtn = ({navigation}) => (
-    <TouchableOpacity
-        onPress={() => navigation.goBack()}
-        style={[styles.btnWrapper, styles.backBtn]}>
-        <FontAwesome name="long-arrow-left" size={24} color="black"/>
-    </TouchableOpacity>
-)
+const Header = ({navigation, isShowBackBtn, isShowSearch, isShowBtnGroup, userCard, searchProducts}) => {
+    const [isShowSearchBar, setIsShowSearchBar] = useState(false)
+
+    if (!isShowSearchBar) {
+        return (
+            <View style={styles.header}>
+                {isShowBackBtn ? <BackBtn navigation={navigation}/> : <HamburgerButton navigation={navigation}/>}
+                {isShowBtnGroup &&
+                <BtnGroup navigation={navigation} userCard={userCard} isShowSearch={isShowSearch}
+                          clickOnSearchBtn={() => setIsShowSearchBar(true)}/>}
+            </View>
+        )
+    } else {
+        return (
+            <View style={styles.header}>
+                <SearchBar onClose={() => setIsShowSearchBar(false)} searchProducts={searchProducts} />
+            </View>
+        )
+    }
+}
 
 const mapStateToProps = state => {
     return {
@@ -68,21 +101,34 @@ const mapStateToProps = state => {
     }
 }
 
-export default connect(mapStateToProps)(HeaderBtnGroup)
-export {HamburgerButton}
-export {BackBtn}
+const mapDispatchToProps = dispatch => {
+    return {
+        searchProducts: (text) => {
+            dispatch(search(text))
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Header)
 export const headerHeight = 90
 
-
 const styles = StyleSheet.create({
+    header: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginHorizontal: 20,
+        height: 120
+    },
     btnWrapper: {
         paddingVertical: 6,
         paddingHorizontal: 8,
         borderRadius: 8,
+        width: 45,
         backgroundColor: 'white'
     },
     btnGroup: {
-        marginRight: 30,
+        marginRight: 10,
         flexDirection: 'row'
     },
     cartBtn: {
@@ -98,8 +144,24 @@ const styles = StyleSheet.create({
         top: 4,
         backgroundColor: '#1B4965'
     },
-    backBtn: {
-        marginLeft: 15
-    }
-
+    searchBar: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#1B4965',
+        borderRadius: 9,
+        paddingRight: 10
+    },
+    iconWrapper: {
+        width: 40,
+        height: 40,
+        backgroundColor: '#1B4965',
+        borderRadius: 8,
+        justifyContent: 'center',
+        alignItems: 'center'
+    },
+    searchInput: {
+        flex: 1,
+        paddingLeft: 20,
+    },
 })

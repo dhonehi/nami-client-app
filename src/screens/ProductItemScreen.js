@@ -10,32 +10,7 @@ import {AntDesign} from '@expo/vector-icons';
 import {RALEWAY_BOLD, RALEWAY_MEDIUM, RALEWAY_REGULAR} from "../fonts/fontsTypes";
 import {headerHeight} from "../components/Header";
 
-const FavouriteBtn = () => {
-    const [isClickOnHeart, setIsClickOnHeart] = useState(false)
-
-    const addToFavourite = () => {
-
-    }
-
-    return (
-        <TouchableWithoutFeedback
-            onPress={() => setIsClickOnHeart(!isClickOnHeart)}>
-            <View style={{backgroundColor: 'white', padding: 15, width: 55, borderRadius: 8, justifyContent: 'center'}}>
-                {isClickOnHeart ?
-                    <AntDesign name="heart" size={24} color="red"/> :
-                    <AntDesign name="hearto" size={24} color="black"/>}
-            </View>
-        </TouchableWithoutFeedback>
-    )
-}
-
 const ProductItemScreen = ({route: {params: {product}}}) => {
-    const addToFavourite = () => {
-        AsyncStorage.getItem('favourites').then(response => {
-            console.log(response)
-        })
-    }
-
     return (
         <View style={styles.productContainer}>
             <View style={{alignItems: 'center', width: '100%'}}>

@@ -7,6 +7,7 @@ import {connect} from "react-redux";
 
 import {getUserOrders, getOrderProducts, cancelOrder} from "../api/api";
 import {addProductsToUserCard,} from "../store/actions/userCard";
+import {Alert} from "react-native-web";
 
 const OrderCard = ({order, sessionId, navigation, addProductsToCard}) => {
     const [orderInfo, setOrderInfo] = useState(null)
@@ -45,6 +46,7 @@ const OrderCard = ({order, sessionId, navigation, addProductsToCard}) => {
     const rejectOrder = () => {
         cancelOrder(orderInfo._id).then(() => {
             setOrderInfo({...orderInfo, condition: 40})
+            Alert.alert('Заказ!', 'Заказ отменен')
         })
     }
 
@@ -72,7 +74,7 @@ const OrderCard = ({order, sessionId, navigation, addProductsToCard}) => {
                 {orderInfo.condition <= 20 &&
                 <View style={styles.bottom}>
                     {orderInfo.condition === 20 &&
-                    <TouchableOpacity onPress={() => navigation.push('MapScreen', {sessionId})}
+                    <TouchableOpacity onPress={() => navigation.push('MapScreen', {sessionId, orderId: orderInfo._id})}
                                       style={styles.findBtn}>
                         <Text style={styles.findBtnText}>Отследить</Text>
                     </TouchableOpacity>}

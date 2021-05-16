@@ -44,7 +44,7 @@ export const ProductsMenuScreen = ({navigation}) => {
                 <View style={styles.menuItems}>
                     {categories.categoryList.map((category, index) => (
                         <TouchableOpacity
-                            onPress={() => navigation.push('MenuItem', {_id: category._id})}
+                            onPress={() => navigation.push('MenuItem', {_id: category._id, title: category.title})}
                             style={styles.menuItem}
                             key={category._id}>
                             <Image style={styles.img} source={images[index <= 4 ? index : 0]}/>

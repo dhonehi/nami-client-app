@@ -4,7 +4,7 @@ import {StyleSheet, View, Dimensions} from 'react-native';
 
 import {connectToWs} from "../api/api";
 
-export default function MapScreen({route: {params: {sessionId}}}) {
+export default function MapScreen({route: {params: {sessionId, orderId}}}) {
     const initialCoordinates = {
         latitude: 48.005414092030264,
         longitude: 37.79913205201336,
@@ -43,7 +43,7 @@ export default function MapScreen({route: {params: {sessionId}}}) {
         socket.on('errors', msg => console.log('errors', msg))
         socket.on('disconnect', msg => console.log('disconnect', msg))
 
-        intervalId = setInterval(() => socket.emit('coordinates'), 10000)
+        intervalId = setInterval(() => socket.emit('coordinates', {orderId}), 10000)
 
         return () => {
             clearInterval(intervalId)

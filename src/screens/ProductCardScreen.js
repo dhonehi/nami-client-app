@@ -156,6 +156,7 @@ const styles = StyleSheet.create({
     imageWrapper: {
         padding: 10,
         backgroundColor: '#1B4965',
+        height: 130,
         borderRadius: 16,
         justifyContent: 'center',
         alignItems: 'center'

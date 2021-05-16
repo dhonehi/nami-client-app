@@ -1,4 +1,4 @@
-import React, {useState} from 'react'
+import React, {useEffect, useState} from 'react'
 
 import {createStackNavigator} from "@react-navigation/stack"
 import {createDrawerNavigator} from '@react-navigation/drawer';
@@ -8,11 +8,9 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Login from '../screens/Login'
 import {Register} from "../screens/Register";
 import {ProductsMenuScreen} from "../screens/ProductsMenuScreen";
-import {MenuItemsScreen} from "../screens/MenuItemsScreen";
+import MenuItemsScreen from "../screens/MenuItemsScreen";
 import ProductItemScreen from "../screens/ProductItemScreen";
 import ProductCardScreen from "../screens/ProductCardScreen";
-import {BackBtn, CartBtn, HamburgerButton} from "../components/Header";
-import HeaderBtnGroup from "../components/Header";
 import ProfileScreen from "../screens/ProfileScreen";
 import OrderScreen from "../screens/OrderScreen";
 import OrdersScreen from "../screens/OrdersScreen";
@@ -21,12 +19,11 @@ import MapScreen from "../screens/MapScreen";
 
 import MyTabBar from "./components/MyTabBar";
 import DrawerContent from "./components/DrawerContent";
-import {View} from "react-native";
+import Header from "../components/Header";
 
 const MenuStack = createStackNavigator()
 const AuthStack = createStackNavigator()
 const OrdersStack = createStackNavigator()
-const FavouritesStack = createStackNavigator()
 const Drawer = createDrawerNavigator()
 const Tab = createBottomTabNavigator()
 
@@ -41,14 +38,10 @@ const Tabs = () => {
 }
 
 const MenuStackNavigator = ({navigation}) => {
-    const [isSearch, setIsSearch] = useState(false)
-
     return (
         <MenuStack.Navigator>
             <MenuStack.Screen name="Menu" component={ProductsMenuScreen} options={{
-                headerLeft: () => (!isSearch ? <HamburgerButton navigation={navigation}/> :
-                    <View style={{flexDirection: 'row', width: '100%', backgroundColor: 'red', height: 20}}/>),
-                headerRight: () => (<HeaderBtnGroup navigation={navigation} isShowSearch={true} onClick={() => setIsSearch(!isSearch)}/>),
+                header: () => <Header navigation={navigation} isShowSearch={false} isShowBtnGroup={true}/>,
                 headerTitle: null,
                 headerTitleContainerStyle: {width: 0},
                 headerStatusBarHeight: 30,
@@ -56,15 +49,15 @@ const MenuStackNavigator = ({navigation}) => {
             }}
             />
             <MenuStack.Screen name="MenuItem" component={MenuItemsScreen} options={{
-                headerLeft: () => (<BackBtn navigation={navigation}/>),
-                headerRight: () => (<HeaderBtnGroup navigation={navigation} isShowSearch={true}/>),
+                header: () => <Header navigation={navigation} isShowBtnGroup={true} isShowBackBtn={true}
+                                      isShowSearch={true}/>,
                 headerTitle: '',
                 headerStatusBarHeight: 30,
                 headerTransparent: true
             }}
             />
             <MenuStack.Screen name="ProductItem" component={ProductItemScreen} options={{
-                headerLeft: () => (<BackBtn navigation={navigation}/>),
+                header: () => <Header navigation={navigation} isShowBtnGroup={false} isShowBackBtn={true}/>,
                 headerTitle: '',
                 headerStatusBarHeight: 30,
                 headerTransparent: true,
@@ -73,7 +66,7 @@ const MenuStackNavigator = ({navigation}) => {
             }}
             />
             <MenuStack.Screen name="ProductCard" component={ProductCardScreen} options={{
-                headerLeft: () => (<BackBtn navigation={navigation}/>),
+                header: () => <Header navigation={navigation} isShowBtnGroup={false} isShowBackBtn={true}/>,
                 headerTitle: '',
                 headerStatusBarHeight: 30,
                 headerTransparent: true,
@@ -82,7 +75,7 @@ const MenuStackNavigator = ({navigation}) => {
             }}
             />
             <MenuStack.Screen name="Order" component={OrderScreen} options={{
-                headerLeft: () => (<BackBtn navigation={navigation}/>),
+                header: () => <Header navigation={navigation} isShowBtnGroup={false} isShowBackBtn={true}/>,
                 headerTitle: '',
                 headerStatusBarHeight: 30,
                 headerTransparent: true,
@@ -91,12 +84,11 @@ const MenuStackNavigator = ({navigation}) => {
             }}
             />
             <MenuStack.Screen name="Favourites" component={FavouritesScreen} options={{
-                headerLeft: () => (<HamburgerButton navigation={navigation}/>),
-                headerRight: () => (<HeaderBtnGroup isShowSearch={false} navigation={navigation}/>),
+                header: () => <Header navigation={navigation} isShowSearch={false} isShowBtnGroup={true}/>,
                 headerTitle: '',
                 headerStatusBarHeight: 30,
                 headerTransparent: true
-            }} />
+            }}/>
         </MenuStack.Navigator>
     )
 }
@@ -112,7 +104,7 @@ const AuthStackNavigator = ({navigation}) => (
 const OrdersStackNavigator = ({navigation}) => (
     <OrdersStack.Navigator>
         <OrdersStack.Screen name="Orders" component={OrdersScreen} options={{
-            headerLeft: () => (<HamburgerButton navigation={navigation}/>),
+            headerLeft: () => (<Header navigation={navigation} isShowSearch={false} isShowBtnGroup={true}/>),
             headerTitle: '',
             headerStatusBarHeight: 50,
             headerTransparent: true
