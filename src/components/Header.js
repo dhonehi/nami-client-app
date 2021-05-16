@@ -58,6 +58,7 @@ const SearchBar = ({onClose, searchProducts}) => {
 
     const closeHandler = () => {
         setSearchText('')
+        searchProducts('')
         onClose()
     }
 
