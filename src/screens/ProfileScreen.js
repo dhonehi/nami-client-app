@@ -27,7 +27,7 @@ const ProfileScreen = ({navigation, isLoggedIn}) => {
                             </TouchableOpacity>
                             <TouchableOpacity style={[styles.btn, {marginBottom: 20}]}
                                               onPress={() => navigation.push('Register')}>
-                                <Text style={styles.btnText}>Зарегестрироваться</Text>
+                                <Text style={styles.btnText}>Зарегистрироваться</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
